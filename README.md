@@ -57,22 +57,22 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 ## 3. Go Runtime Internals (腰包裡的秘密)
 這系列深入 Go Runtime 的底層機制，從調度器到記憶體管理，再到併發原語的實作細節。
 
-*   **[3.1 The Scheduler (GMP)](3_1_GO_GMP.md)**: 宏觀調度模型，M, P, G 的三角關係與 Work Stealing。
-*   **[3.2 The Goroutine](3_2_GO_ROUTINE.md)**: 微觀視角，G 如何在單一 M 上切換 (g0 stack switch)。
-*   **[3.3 The Sysmon](3_3_GO_SYSMON.md)**: 監控線程，負責搶佔 (Preemption) 與死結偵測。
-*   **[3.4 The Netpoller](3_4_GO_NETPOLLER.md)**: 網路 I/O 模型，Epoll 與 Runtime 的整合 (非阻塞 I/O)。
-*   **[3.5 The Allocator](3_5_GO_ALLOCATOR.md)**: 記憶體分配器 (TCMalloc)，mcache, mcentral, mheap 的三級緩存。
-*   **[3.6 The Lock (Mutex)](3_6_GO_LOCK.md)**: 互斥鎖的本質，自旋 (Spinning) 與休眠 (Parking/Futex) 的 Hybrid 機制。
-*   **[3.7 The Atomic](3_7_GO_ATOMIC.md)**: 原子操作，硬體總線鎖 (Bus Lock) 與 MESI 協議。
-*   **[3.8 The RWMutex](3_8_GO_RWMUTEX.md)**: 讀寫鎖，讀者無鎖路徑與寫者優先級設計。
-*   **[3.9 The sync.Map](3_9_GO_SYNC_MAP.md)**: 併發 Map，冷熱分離 (Read/Dirty) 與動態升級機制。
-*   **[3.10 The WaitGroup & Cond](3_10_GO_WAITGROUP_COND.md)**: 流程控制的藝術，信號量 (Sema) 與驚群效應 (Thundering Herd)。
-*   **[3.11 The Channel](3_11_GO_CHANNEL.md)**: Go 的靈魂。環狀緩衝區 (Ring Buffer) 與鎖的交互，以及 Select 的隨機性實作。
-*   **[3.12 The Garbage Collector](3_12_GO_GC.md)**: 記憶體回收。三色標記 (Tri-color)、寫屏障 (Write Barrier) 與 STW 的細節。
-*   **[3.13 The Interface](3_13_GO_INTERFACE.md)**: 萬能代理。`eface` 與 `iface` 的底層結構，以及 `itab` 的動態分派成本。
-*   **[3.14 The Map](3_14_GO_MAP.md)**: 雜湊表。Hash Bucket (`bmap`) 結構、Tophash 加速與漸進式擴容 (Evacuation)。
-*   **[3.15 The Defer & Panic](3_15_GO_DEFER.md)**: 異常處理。Defer 鏈表的執行順序與 `_defer` 結構的演進 (Heap -> Stack -> Open-coded)。
-*   **[3.16 The Reflection](3_16_GO_REFLECT.md)**: 鏡像世界。`reflect` 的三大定律，以及 `interface{}` 與 `reflect.Value` 的底層轉換。
+*   **[Book 3.1: The Scheduler (GMP)](3_1_GO_GMP.md)**: 宏觀調度模型，M, P, G 的三角關係與 Work Stealing。
+*   **[Book 3.2: The Goroutine](3_2_GO_ROUTINE.md)**: 微觀視角，G 如何在單一 M 上切換 (g0 stack switch)。
+*   **[Book 3.3: The Sysmon](3_3_GO_SYSMON.md)**: 監控線程，負責搶佔 (Preemption) 與死結偵測。
+*   **[Book 3.4: The Netpoller](3_4_GO_NETPOLLER.md)**: 網路 I/O 模型，Epoll 與 Runtime 的整合 (非阻塞 I/O)。
+*   **[Book 3.5: The Allocator](3_5_GO_ALLOCATOR.md)**: 記憶體分配器 (TCMalloc)，mcache, mcentral, mheap 的三級緩存。
+*   **[Book 3.6: The Lock (Mutex)](3_6_GO_LOCK.md)**: 互斥鎖的本質，自旋 (Spinning) 與休眠 (Parking/Futex) 的 Hybrid 機制。
+*   **[Book 3.7: The Atomic](3_7_GO_ATOMIC.md)**: 原子操作，硬體總線鎖 (Bus Lock) 與 MESI 協議。
+*   **[Book 3.8: The RWMutex](3_8_GO_RWMUTEX.md)**: 讀寫鎖，讀者無鎖路徑與寫者優先級設計。
+*   **[Book 3.9: The sync.Map](3_9_GO_SYNC_MAP.md)**: 併發 Map，冷熱分離 (Read/Dirty) 與動態升級機制。
+*   **[Book 3.10: The WaitGroup & Cond](3_10_GO_WAITGROUP_COND.md)**: 流程控制的藝術，信號量 (Sema) 與驚群效應 (Thundering Herd)。
+*   **[Book 3.11: The Channel](3_11_GO_CHANNEL.md)**: Go 的靈魂。環狀緩衝區 (Ring Buffer) 與鎖的交互，以及 Select 的隨機性實作。
+*   **[Book 3.12: The Garbage Collector](3_12_GO_GC.md)**: 記憶體回收。三色標記 (Tri-color)、寫屏障 (Write Barrier) 與 STW 的細節。
+*   **[Book 3.13: The Interface](3_13_GO_INTERFACE.md)**: 萬能代理。`eface` 與 `iface` 的底層結構，以及 `itab` 的動態分派成本。
+*   **[Book 3.14: The Map](3_14_GO_MAP.md)**: 雜湊表。Hash Bucket (`bmap`) 結構、Tophash 加速與漸進式擴容 (Evacuation)。
+*   **[Book 3.15: The Defer & Panic](3_15_GO_DEFER.md)**: 異常處理。Defer 鏈表的執行順序與 `_defer` 結構的演進 (Heap -> Stack -> Open-coded)。
+*   **[Book 3.16: The Reflection](3_16_GO_REFLECT.md)**: 鏡像世界。`reflect` 的三大定律，以及 `interface{}` 與 `reflect.Value` 的底層轉換。
 
 ---
 
@@ -89,7 +89,41 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 *   **[Book 4.7: Cache Penetration](4_7_GO_BLOOM_FILTER.md)**: 布隆過濾器，防禦惡意隨機 Key 攻擊。
 *   **[Book 4.8: ErrGroup](4_8_GO_ERRGROUP.md)**: 併發聚合模式，處理多任務並行與錯誤傳播。
 *   **[Book 4.9: Sharding](4_9_GO_SHARDING.md)**: 有序分片模式，在並發中保證局部順序性。
-*   **[Book 4.10: Actor Model](4_10_GO_ACTOR.md)** (待補): 萬物皆 Actor，無鎖併發的終極架構。
+*   **[Book 4.10: Actor Model](4_10_GO_ACTOR.md)**: 萬物皆 Actor，無鎖併發的終極架構。
+
+---
+
+## 🚀 Book 5: Package Internals & Performance (套件深度解析)
+
+這系列進入 "Pure Go" 的極限領域，探討知名開源套件如何利用底層技巧 (Unsafe, Syscall, RingBuffer) 來榨乾硬體效能。
+
+*   **[Book 5.1: BigCache (Zero GC)](5_1_GO_BIGCACHE.md)**: 繞過 Go GC 的藝術。如何利用 Byte Array 與 RingBuffer 構建百萬級 TPS 緩存。
+*   **[Book 5.2: Snowflake (Distributed ID)](5_2_GO_SNOWFLAKE.md)**: 推特雪花算法。如何在分散式系統中無狀態地生成全域唯一 ID。
+
+---
+
+## 🌐 Book 6: Infrastructure Drivers (基礎設施驅動)
+
+離開 Go 的舒適圈，與龐大的外部系統協作。這裡的重點是「連接管理」、「協議優化」與「故障處理」。
+
+*   **[Book 6.1: The MySQL Driver](6_1_GO_MYSQL.md)**: 資料庫驅動。Connection Pool 的實作細節 (`freeConn` slice) 與 Wire Protocol。
+*   **[Book 6.2: The Redis Driver](6_2_GO_REDIS.md)**: 鍵值存儲。Cluster Protocol、Pipeline 優化、Lua 原子操作與秒殺架構實戰。
+*   **[Book 6.3: The Kafka Driver (Core IO)](6_3_GO_KAFKA.md)**: 消息隊列 (Producer & IO)。深入 OS Page Cache, Zero-Copy (`sendfile`), Sequential IO 與 AWS Nitro 硬體優化。
+*   **[Book 6.4: The Kafka Consumer](6_4_GO_KAFKA_CONSUMER.md)**: 群體智慧。Consumer Group Rebalance (Stop-The-World vs Cooperative), Offset Commit 策略與 KRaft 架構。
+*   **[Book 6.5: RocketMQ (Tiered Storage)](6_5_GO_ROCKETMQ.md)**: 分層存儲。冷熱數據分離架構 (Poller -> S3) 與多層級 CommitLog 設計。
+*   **[Book 6.6: NATS (Simplicity)](6_6_GO_NATS.md)**: 極簡主義。Core NATS (At-Most-Once) 與 JetStream (Persistent) 的架構差異，以及 Gossiping 協議。
+
+---
+
+## 🌐 Book 7: Network & Architecture (網路架構與攻防)
+
+這系列經過重構，從底層基礎設施一路講到高層應用與攻防，構建完整的網路世界觀。
+
+*   **[Book 7.1: The Infrastructure](7_1_INFRA.md)**: 基礎設施 (L2/L3)。MAC vs IP、Routing Table 邏輯、NAT (SNAT/DNAT) 原理、**K8s Service (ClusterIP)** 與 DNS 解析流程。
+*   **[Book 7.2: The Transport](7_2_TRANSPORT.md)**: 傳輸層 (L4)。TCP vs UDP 核心差異、可靠性的代價 (Jitter & HOL Blocking)、**Backpressure (背壓)** 機制與 **QUIC (HTTP/3)** 的逆襲。
+*   **[Book 7.3: The Application](7_3_APPLICATION.md)**: 應用層 (L7)。HTTP 的演進 (1.1 -> 2 -> 3/QUIC)、TLS 握手成本與 WebSocket 升級機制。
+*   **[Book 7.4: The Operations](7_4_OPS.md)**: 運維實戰。TIME_WAIT vs CLOSE_WAIT 除錯指南、壓測策略 (Load Testing) 與 Nginx 關鍵調校。
+*   **[Book 7.5: The Security](7_5_SECURITY.md)**: 網路攻防。SYN Flood (L4), UDP Reflection (L3), Slowloris (L7) 攻擊原理與雲端防禦架構 (Origin Cloaking)。
 
 ---
 

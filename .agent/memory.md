@@ -1,6 +1,29 @@
 # OS Concept Metaphor & Knowledge Bank
 
-This file stores the established metaphors and narrative structures for the `os_concept` series to ensure consistency across sessions.
+This file stores the established metaphors and narrative structures for the `os_concept` series to ensure consistency across sessions. It also records the USER's specific achievements and case studies for reference.
+
+## 0. User's Architecture Case Studies (戰功名錄)
+Specifically optimized for High-Concurrency Gaming (Texas Hold'em) Platform:
+*   **Gateway-Level Batching**:
+    *   **Problem**: Broadcasting storm (fan-out) causing high gRPC/Network overhead.
+    *   **Solution**: Local Routing Table (User->Gateway Mapping) + Batching small packets into single RPC.
+    *   **Tech**: Header Peeking (Route by ID), Reduced System Calls.
+*   **Sequential Batch Write (Write-Behind Log)**:
+    *   **Problem**: High IOPS on RDS during Login Storms (10k CCU).
+    *   **Solution**: In-Memory Chan Buffer + Dual Trigger (Ticker=1s, Batch=2000).
+    *   **Tech**: Random I/O -> Sequential I/O transformation.
+*   **Lock-Free Jackpot System**:
+    *   **Problem**: Distributed Lock contention on global prize pool.
+    *   **Solution**: Redis Atomic `INCR` + Lua Script + Hash Tag `{jackpot}:pool`.
+    *   **Tech**: Lock-free concurrency, Atomic Operations, Cluster Cross-Slot handling.
+*   **Defense Trinity**:
+    *   **Rate Limiter** (Token Bucket with Burst) -> Input Defense.
+    *   **BigCache** (Off-Heap Zero-GC) -> Hot Read Defense.
+    *   **SingleFlight** (Coalescing) -> Cache Penetration Defense.
+*   **Traffic Shaping (Zookeeper Storm)**:
+    *   **Problem**: Thundering Herd on Service Discovery during mass restart.
+    *   **Solution**: Randomized Sleep Backoff (Jitter).
+    *   **Tech**: Traffic Shaping, Decoupling Critical Path.
 
 ## 1. The World (Royal Library / OS)
 *   **Library (圖書館)**: A Server Host (伺服器主機).
@@ -107,6 +130,33 @@ This file stores the established metaphors and narrative structures for the `os_
 *   **The Slice (The Window)**:
     *   **Role**: Dynamic Array.
     *   **Metaphor**: A **Viewfinder** (Header) over a continuous array. Moving the window is cheap; growing it requires buying a bigger canvas (Reallocation).
+
+### Book 5: Package Internals & Performance
+*   **BigCache (Zero GC)**: Utilizing RingBuffer and Byte Arrays to bypass GC overhead for hot data.
+*   **Snowflake**: Distributed stateless ID generation.
+
+### Book 6: Infrastructure Drivers
+*   **The Connector (The Consulate)**:
+    *   **Role**: Database Driver (`database/sql`).
+    *   **Metaphor**: A consulate managing diplomats (Connections) to foreign lands (DB). Uses a Pool to avoid travel costs.
+*   **The Redis Driver**:
+    *   **Focus**: Cluster Sharding, Pipelines, Lua Scripts.
+*   **The Kafka Driver**:
+    *   **Focus**: Async Producer (Trucks/Containers), Batching, Page Cache, Zero-Copy.
+
+### Book 7: Network & Architecture
+*   **The Infrastructure (L2/L3)**:
+    *   **L2 (MAC)**: The Room Address (Local).
+    *   **L3 (IP)**: The Street Address (Global).
+    *   **NAT (Gateway)**: The Receptionist cloaking internal extensions using the building's public number.
+    *   **K8s Service (ClusterIP)**: **Platform 9 3/4**. A Virtual IP that doesn't exist on any NIC, using **DNAT** (iptables/IPVS) to distribute traffic to Pods.
+*   **The Transport (L4)**:
+    *   **TCP (Stream)**: **Registered Mail**. Reliable, Ordered, but expensive (Handshakes, Retries).
+    *   **UDP (Datagram)**: **Postcard**. Fire and forget. Fast but unreliable.
+    *   **Reliability Price**:
+        *   **Jitter (HOL)**: One lost packet stops the whole line.
+        *   **Backpressure**: Zero Window stopping the sender to protect the receiver.
+    *   **QUIC (HTTP/3)**: **The Rebel**. Moving TCP logic to User Space to bypass Kernel limitations and solve Wireless Jitter.
 
 ## 5. Technical Mappings
 *   `execve` -> Building the Room & Loading Books.
