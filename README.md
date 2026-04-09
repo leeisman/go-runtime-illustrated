@@ -107,11 +107,17 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 離開 Go 的舒適圈，與龐大的外部系統協作。這裡的重點是「連接管理」、「協議優化」與「故障處理」。
 
 *   **[Book 6.1: The MySQL Driver](6_1_GO_MYSQL.md)**: 資料庫驅動。Connection Pool 的實作細節 (`freeConn` slice) 與 Wire Protocol。
-*   **[Book 6.2: The Redis Driver](6_2_GO_REDIS.md)**: 鍵值存儲。Cluster Protocol、Pipeline 優化、Lua 原子操作與秒殺架構實戰。
-*   **[Book 6.3: The Kafka Driver (Core IO)](6_3_GO_KAFKA.md)**: 消息隊列 (Producer & IO)。深入 OS Page Cache, Zero-Copy (`sendfile`), Sequential IO 與 AWS Nitro 硬體優化。
-*   **[Book 6.4: The Kafka Consumer](6_4_GO_KAFKA_CONSUMER.md)**: 群體智慧。Consumer Group Rebalance (Stop-The-World vs Cooperative), Offset Commit 策略與 KRaft 架構。
-*   **[Book 6.5: RocketMQ (Tiered Storage)](6_5_GO_ROCKETMQ.md)**: 分層存儲。冷熱數據分離架構 (Poller -> S3) 與多層級 CommitLog 設計。
-*   **[Book 6.6: NATS (Simplicity)](6_6_GO_NATS.md)**: 極簡主義。Core NATS (At-Most-Once) 與 JetStream (Persistent) 的架構差異，以及 Gossiping 協議。
+*   **[Book 6.2: MySQL InnoDB](6_2_MYSQL_INNODB.md)**: 存儲引擎核心。B+Tree 結構、Buffer Pool、WAL 與 Doublewrite Buffer。
+*   **[Book 6.3: MySQL Journey](6_3_MYSQL_JOURNEY.md)**: 查詢的一生。Parser, Optimizer, Execution Engine, 到 Storage Engine 的完整路徑。
+*   **[Book 6.4: MySQL Concurrency](6_4_MYSQL_CONCURRENCY.md)**: 併發控制。MVCC, Undo Log, Read View 與隔離級別 (RC vs RR)。
+*   **[Book 6.5: SQL Execution Order](6_5_SQL_EXECUTION_ORDER.md)**: 執行順序。FROM, JOIN, WHERE 到 SELECT, ORDER BY 的精確物理執行步驟。
+*   **[Book 6.6: MySQL Sharding](6_6_MYSQL_SHARDING.md)**: 分庫分表。水平/垂直分區策略、分片鍵 (Sharding Key) 選擇與分散式事務挑戰。
+*   **[Book 6.7: The Redis Driver](6_7_GO_REDIS.md)**: 鍵值存儲。Cluster Protocol、Pipeline 優化、Lua 原子操作與秒殺架構實戰。
+*   **[Book 6.8: The Kafka Driver (Core IO)](6_8_GO_KAFKA.md)**: 消息隊列 (Producer & IO)。深入 OS Page Cache, Zero-Copy (`sendfile`), Sequential IO 與 AWS Nitro 硬體優化。
+*   **[Book 6.9: The Kafka Consumer](6_9_GO_KAFKA_CONSUMER.md)**: 群體智慧。Consumer Group Rebalance (Stop-The-World vs Cooperative), Offset Commit 策略與 KRaft 架構。
+*   **[Book 6.10: RocketMQ (Tiered Storage)](6_10_GO_ROCKETMQ.md)**: 分層存儲。冷熱數據分離架構 (Poller -> S3) 與多層級 CommitLog 設計。
+*   **[Book 6.11: NATS (Simplicity)](6_11_GO_NATS.md)**: 極簡主義。Core NATS (At-Most-Once) 與 JetStream (Persistent) 的架構差異，以及 Gossiping 協議。
+*   **[Book 6.12: Proto Actor vs Chan](6_12_PROTO_ACTOR_VS_CHAN.md)**: 併發模型對決。Actor 模型的狀態封裝與 Lock-Free 優勢，對比 Go Native Channel 的侷限與適用場景。
 
 ---
 

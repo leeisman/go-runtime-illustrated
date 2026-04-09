@@ -33,9 +33,24 @@ type hchan struct {
     elemtype *_type         // 資料型別
     sendx    uint           // 下一個要放入的位置 (Sender Index)
     recvx    uint           // 下一個要拿取的位置 (Receiver Index)
-    recvq    waitq          // 等待接收的隊伍 (Receiver Queue)
-    sendq    waitq          // 等待發送的隊伍 (Sender Queue)
+    recvq    waitq          // 等待接收的隊伍 (Receiver Queue) -> 掛著一串 sudog
+    sendq    waitq          // 等待發送的隊伍 (Sender Queue) -> 掛著一串 sudog
     lock     mutex          // 保護這個管子的鎖 (就是我們在 3.5 提過的那個 runtime.lock)
+}
+
+// 隊伍結構 (Linked List)
+type waitq struct {
+    first *sudog // 隊頭 (Head)
+    last  *sudog // 隊尾 (Tail)
+}
+
+// 排隊單 (The Ticker)
+type sudog struct {
+    g *g              // 是哪個 Goroutine 在排隊
+    elem unsafe.Pointer // 貨物 (Data) 所在的地址 (直接指向該 G 的 Stack)
+    next *sudog       // 下一張單子
+    prev *sudog       // 上一張單子
+    ...
 }
 ```
 

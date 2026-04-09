@@ -113,7 +113,11 @@ Specifically optimized for High-Concurrency Gaming (Texas Hold'em) Platform:
         *   **White**: Unvisited (Trash candidate).
         *   **Grey**: In Queue (To be checked).
         *   **Black**: Safe (Alive).
-    *   **Mechanism**: **Bitmap** (The Checklist) & **Write Barrier** (The Monitor).
+    *   **Mechanism**: **Double Buffering** (Bitmap `allocBits` vs `gcmarkBits`) & **Write Barrier** (The Monitor preventing missed pointers).
+    *   **Defensive Engineering (Leaks)**:
+        1. **Goroutine Leaks**: Blocked Gs act as GC Roots, pinning all stack-reachable objects (Primary OOM cause).
+        2. **Slice Sub-slicing**: Capturing small parts of arrays keeps the whole backing array alive. Fix: `copy()` or `bytes.Clone()`.
+        3. **Timer Leaks**: Always use `defer ticker.Stop()`.
 *   **The Interface (The Universal Proxy)**:
     *   **Role**: Polymorphism.
     *   **Metaphor**: A **Wrapper Box**. Inner contents (Concrete Data) are hidden; only Buttons (Methods) are exposed.
@@ -127,13 +131,21 @@ Specifically optimized for High-Concurrency Gaming (Texas Hold'em) Platform:
 *   **The Reflection (The Mirror World)**:
     *   **Role**: Runtime Inspection.
     *   **Metaphor**: Unpacking the **Interface Box** (`eface`) to see the Metadata (`_type`) inside.
+    *   **Performance**: Mandatory to cache schemas (offsets/tags) because reflection bypasses compiler optimizations.
 *   **The Slice (The Window)**:
     *   **Role**: Dynamic Array.
     *   **Metaphor**: A **Viewfinder** (Header) over a continuous array. Moving the window is cheap; growing it requires buying a bigger canvas (Reallocation).
 
+### Book 4: Advanced Concurrency
+*   **Sharding (The Partitioned Highway)**: Ordered concurrency via `Hash(ID) % N`. Solves lock contention but risks Data Skew.
+*   **Actor Model / Proto.Actor (The Mailbox)**: Bypasses channel overhead using MPSC lock-free queues and batching. Actor state is inherently thread-safe.
+
 ### Book 5: Package Internals & Performance
-*   **BigCache (Zero GC)**: Utilizing RingBuffer and Byte Arrays to bypass GC overhead for hot data.
-*   **Snowflake**: Distributed stateless ID generation.
+*   **BigCache (Zero GC)**: Utilizing Pointer-less Maps (`map[uint64]uint32`) and RingBuffer to bypass GC scan overhead for hot data.
+*   **Snowflake**: Distributed stateless 64-bit ID generation. No collision if Machine ID and Clock are stable.
+
+### Book 8: Testing & Profiling
+*   **Profiling**: Using `uber-go/goleak` for unit tests, and `net/http/pprof` for production (Heap and Goroutine deep-dive analysis).
 
 ### Book 6: Infrastructure Drivers
 *   **The Connector (The Consulate)**:

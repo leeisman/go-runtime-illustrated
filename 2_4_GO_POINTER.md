@@ -266,6 +266,68 @@ Init(&u)            // 2. 傳入房子的地址 (例如 0x3000)
 *   **限制**: 如果外面 `u` 一開始是 `nil` (這在 struct 不可能發生，但邏輯上來說)，你無法救它，因為你沒有權限去「分配新房子給它」，你只能修舊房子。
 *   **隱喻**: **裝修舊房**。
 
+### 3. 用代碼證明一切 (Code Proof)
+
+文字比喻可能太抽象，我們直接看這段 **Go 語言可以執行的範例**。請注意記憶體地址的變化。
+
+```go
+package main
+
+import "fmt"
+
+type Car struct {
+	Model string
+}
+
+// 情境 A: 失敗的換車 (傳入一級指針 *Car)
+// 傳入的是「車鑰匙的影本」。
+func replaceCarFail(c *Car) {
+	newCar := &Car{Model: "Porsche"} // 買新車
+	c = newCar                       // 員工把「自己手上的影本」換成新車鑰匙
+    // -> 老闆手上的鑰匙完全沒變
+}
+
+// 情境 B: 成功的換車 (傳入二級指針 **Car)
+// 傳入的是「老闆手指的地址」。
+func replaceCarSuccess(c **Car) {
+	newCar := &Car{Model: "Ferrari"} // 買新車
+	*c = newCar                      // 走到老闆手指的地址，把那裡的鑰匙換掉
+    // -> 老闆下次拿鑰匙時，拿到的就是 Ferrari
+}
+
+func main() {
+	// 1. 老闆買了一台 Toyota
+	myCar := &Car{Model: "Toyota"}
+	fmt.Printf("1. 老闆剛買車: %s, 車子停在: %p, 老闆口袋(變數)的位置: %p\n", 
+		myCar.Model, myCar, &myCar)
+
+	// 2. 測試換車 (失敗版)
+	replaceCarFail(myCar)
+	fmt.Printf("2. 換車失敗後檢查: %s (還是 Toyota)\n", myCar.Model)
+
+	// 3. 測試換車 (成功版 - 二級指針)
+	replaceCarSuccess(&myCar) // 注意：這裡傳入的是 &myCar (老闆口袋的地址)
+	fmt.Printf("3. 換車成功後檢查: %s (變成 Ferrari 了!)\n", myCar.Model)
+	fmt.Printf("   現在車子停在 new address: %p, 但老闆口袋位置沒變: %p\n", myCar, &myCar)
+}
+```
+
+**執行結果 (Output)**:
+
+```text
+1. 老闆剛買車: Toyota, 車子停在: 0x14000010050, 老闆口袋(變數)的位置: 0x14000058020
+2. 換車失敗後檢查: Toyota (還是 Toyota)
+3. 換車成功後檢查: Ferrari (變成 Ferrari 了!)
+   現在車子停在 new address: 0x140000100a0, 但老闆口袋位置沒變: 0x14000058020
+```
+
+> **關鍵觀察**:
+> *   在第 3 步成功後，`myCar` 的值從原本的 `...050` 變成了 `...0a0` (換車了)。
+> *   但是 `&myCar` (老闆口袋的位置) 依然維持 `...020`。因為我們是去「固定的口袋」換「裡面的東西」。
+
+> **核心觀念**：如果你想改變 **外部變數指向哪裡** (Reassignment)，你必須傳入 **該變數的地址 (`&var`)**，也就是二級指針。
+
+
 ---
 
 ## 6. 終章 (Finale)：為什麼要禁止指針運算？

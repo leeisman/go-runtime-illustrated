@@ -172,3 +172,84 @@ db.SetConnMaxIdleTime(10 * time.Minute)
     *   DB 則維持在最佳負載 (100 concurrent)，TPS 穩定輸出 (5000)。
 
 **結論**: Connection Pool 不只是為了復用，更是為了 **保護下游資料庫**，將壓力留在應用層。
+
+---
+
+## 6. 第六樂章：Context 護身符 (Query Timeout & Cancellation)
+
+連線池幫你管好了「連線的數量」，但還有一個致命問題它管不了：**「一條連線被某個慢查詢霸佔多久？」**
+
+### 6.1 沒有 Context 的災難
+假設你的 Pool 設了 `MaxOpenConns = 50`。
+某天 DBA 不小心漏加了索引，一條 SQL 從 5ms 變成 30 秒。
+*   50 條連線全部卡在這條慢 SQL 上，沒有人回來。
+*   後續所有請求全部在 Go 端排隊 (`connRequests`)，堆積上萬個 Goroutine。
+*   前端用戶看到的是：所有 API 全面 Timeout，系統癱瘓。
+
+**解法**：每一次 DB 操作，都必須帶上 `context.WithTimeout`，強制設定死線！
+
+```go
+func GetUser(db *sql.DB, id int64) (*User, error) {
+    // 給這條查詢最多 3 秒的生命，超時直接斬殺！
+    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel()
+
+    var user User
+    // 使用 QueryRowContext 而非 QueryRow
+    err := db.QueryRowContext(ctx, "SELECT name, age FROM users WHERE id = ?", id).
+        Scan(&user.Name, &user.Age)
+    
+    if err != nil {
+        return nil, err // 超時會回傳 context.DeadlineExceeded
+    }
+    return &user, nil
+}
+```
+
+當 3 秒一到，Go 的 Driver 會主動向 MySQL 發送 `KILL QUERY` 指令，把這條 SQL 斬斷。
+連線被釋放回 Pool，不會繼續霸佔資源。
+
+### 6.2 上游斷線，下游還在傻傻做 (Orphaned Query)
+這是更隱蔽的災難。想像一個完整的請求鏈路：
+
+```
+用戶 (Browser) → API Gateway → Go Service → MySQL
+```
+
+用戶等了 2 秒不耐煩，直接關掉瀏覽器 (取消請求)。
+API Gateway 收到斷線通知，把上游的 `context` 取消了。
+
+**如果你的 Go Service 沒有把上游的 Context 傳遞下去**：
+*   Go Service 完全不知道用戶已經走了。
+*   它還在傻傻等 MySQL 跑完一條 10 秒的慢查詢。
+*   查完之後，結果送回去才發現：「人呢？沒人收貨了！」
+*   **白白浪費了 10 秒的 DB 連線 + CPU 算力。**
+
+**正確做法**：把 HTTP Handler 的 `request.Context()` 一路往下傳遞！
+
+```go
+func HandleGetUser(w http.ResponseWriter, r *http.Request) {
+    // r.Context() 會在用戶斷線時自動被取消 (Cancel)
+    // 加上 WithTimeout 做雙重保險：就算用戶沒斷，最多也只等 3 秒
+    ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)
+    defer cancel()
+    
+    user, err := GetUserWithContext(ctx, db, userID)
+    // ...
+}
+
+func GetUserWithContext(ctx context.Context, db *sql.DB, id int64) (*User, error) {
+    var user User
+    // 這裡的 ctx 同時繼承了「用戶斷線取消」和「3 秒超時」兩道保險
+    err := db.QueryRowContext(ctx, "SELECT name, age FROM users WHERE id = ?", id).
+        Scan(&user.Name, &user.Age)
+    return &user, err
+}
+```
+
+這樣一來，不管是「用戶主動斷線」還是「查詢超過 3 秒」，任何一個條件先觸發，Go 都會立刻斬斷 MySQL 查詢並歸還連線。
+
+### 6.3 鐵律總結
+1. **永遠使用 `XXXContext` 系列方法** (`QueryContext`, `ExecContext`, `QueryRowContext`)，而非無 Context 版本。
+2. **上游的 Context 必須一路傳遞到最底層的 DB 呼叫**，確保取消信號能貫穿整條鏈路。
+3. **每一層都可以加上自己的 `WithTimeout` 做雙重保險**，防止某一層的超時設定過於寬鬆。
