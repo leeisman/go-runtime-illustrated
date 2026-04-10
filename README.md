@@ -26,6 +26,14 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
     *   **核心隱喻**: 監控室 (Epoll Instance), 點名單 (Ready List), 紅黑樹 (RB-Tree)。
     *   **重點**: Linux 如何用 O(1) 的效率解決 C10K 問題。Go Netpoller 的底層基石。
 
+*   **[Book 1.5: Memory Mapped I/O (mmap)](1_5_MMAP_IO.md)**
+    *   **核心隱喻**: 記憶體與硬碟之間的時空隧道。
+    *   **重點**: mmap 如何繞過傳統 `read/write` 的 Kernel 緩衝區拷貝，讓硬碟上的 Block 直接映射進 Process 的虛擬位址空間，實現 Zero-Copy 讀取。Kafka/RocketMQ 的底層基石。
+
+*   **[Book 1.6: WAL (Write-Ahead Logging)](1_6_WAL.md)**
+    *   **核心隱喻**: 先寫日記再整理房間。
+    *   **重點**: Sequential I/O 吊打 Random I/O 的本質原因。WAL 如何透過順序 Append 日誌 + 背景 Checkpoint 落盤，讓 MySQL (Redo Log)、MongoDB (Journal)、PostgreSQL 同時保證「極速寫入」與「斷電不遺失資料」。
+
 ---
 
 ## 🧠 Book 2: Memory Management (記憶體管理)
