@@ -126,15 +126,30 @@ type sudog struct {
 *   **發送給 closed channel**: `panic` (這是最常見的 Bug)
 *   **關閉 closed channel**: `panic`
 
-### 4.3 Select 的隨機性
-當你寫：
-```go
-select {
-case <- chan1:
-case <- chan2:
-}
-```
-如果兩個 Channel 同時有資料，Go 會 **隨機 (Pseudo-random)** 選擇執行一個 case，而不是由上而下。這是為了防止某個 Channel 餓死其他 Channel。
+### 4.3 Select 多路復用的底層魔法 (`runtime.selectgo`)
+
+我們常說 `select` 能同時監聽多個 Channel，但它到底怎麼做到的？
+在編譯期，Go 編譯器會把 `select` 語句轉換成對 Runtime 底層 `runtime.selectgo` 函數的呼叫。這個函數做了一系列非常精妙的操作：
+
+1.  **打亂順序 (Shuffle Order)**
+    為了防止寫在前面的 `case` 永遠優先觸發（造成飢餓問題），`selectgo` 第一步是產生一個隨機數陣列，把所有 `case` 的檢查順序做一次 Fisher-Yates 洗牌。這是為什麼多個 Channel 同時就緒時，觸發是隨機的原因。
+2.  **記憶體地址鎖排序 (Lock Order)**
+    `select` 要同時操作多個 Channel，這意味著它**必須同時鎖住所有參與的 Channel**。
+    如果有兩個 Goroutine 寫了相反順序的 `select`，直接上鎖 100% 會引發 Deadlock。
+    為了避免死結，`selectgo` 會把所有參與的 Channel **按照它們在 Heap 上的記憶體地址由小到大排序**。然後依照這個物理地址順序去要求鎖 (`lock`)。地址排序保證了全局一致的上鎖順序，巧妙避開了死結。
+3.  **第一輪尋訪 (Fast Path)**
+    拿到所有鎖之後，依照「第 1 步打亂的順序」輪詢每個 Channel，看（有沒有資料可讀 / 緩衝有沒有空位可寫）。
+    *   只要發現**任何一個**已經 Ready，立刻解開所有其他 Channel 的鎖，並執行該 `case`。
+    *   如果都沒 Ready，而且有寫 `default`，就解開所有鎖，執行 `default`。
+4.  **分身排隊並休眠 (Parking)**
+    如果都沒 Ready，也沒有 `default`，這個 Goroutine 就要睡覺了。但它要怎麼同時等好幾個 Channel？
+    *   Runtime 會把這個 Goroutine 包裝成好幾個 `sudog` 結構體（像是分身）。
+    *   把這些 `sudog` 分別掛進每一個參與 Channel 的 `recvq` 或 `sendq` 等待隊列裡。
+    *   然後呼叫 `gopark` 把 Goroutine 催眠。
+5.  **喚醒與拔除分身 (Wake Up & Cleanup)**
+    *   當**其中某一個** Channel 來了資料，那個 Channel 的發送者會發現隊列裡有 `sudog`，然後把資料交給它，並喚醒這個 Goroutine (`goready`)。
+    *   Goroutine 醒來後的第一件事，就是**趕快去其他的 Channel 隊列裡，把剩下的 `sudog` 分身全部拔掉 (dequeue)**，避免之後被誤喚醒。
+    *   最後解開所有鎖，執行中獎的那個 `case`。
 
 ---
 

@@ -141,6 +141,8 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 *   **[Book 7.4: The Operations](7_4_OPS.md)**: 運維實戰。TIME_WAIT vs CLOSE_WAIT 除錯指南、壓測策略 (Load Testing) 與 Nginx 關鍵調校。
 *   **[Book 7.5: The Security](7_5_SECURITY.md)**: 網路攻防。SYN Flood (L4), UDP Reflection (L3), Slowloris (L7) 攻擊原理與雲端防禦架構 (Origin Cloaking)。
 *   **[Book 7.6: K8s Game Traffic (遊戲流量零代理架構)](7_6_K8S_GAME_TRAFFIC.md)**: 超低延遲遊戲後端。Headless Service 零代理 (Zero-Proxy) 設計、Client-Side gRPC Load Balancing (`dns:///` + `round_robin`)、HTTP/2 多路複用取代 Connection Pool、Service Mesh 的 L7 Sidecar 效能代價分析。
+*   **[Book 7.7: K8s 零停機部署 (Probes & Graceful Shutdown)](7_7_K8S_DEPLOY.md)**: 完整發版生命週期。Rolling Update 滾動換班機制、Readiness / Liveness / Startup 三種探針的職責差異、preStop Sleep 解決網路拓撲更新空窗期、Go `server.Shutdown()` 與 gRPC `GracefulStop()` 優雅退場完整實作。
+*   **[Book 7.8: K8s 分散式 Actor 叢集 (Smart Gateway & Consistent Hashing)](7_8_K8S_ACTOR_CLUSTER.md)**: 去中心化動態路由。白嫖 K8s API Server 作為註冊中心 (Kubernetes Provider)、Headless Service Endpoints Watch 機制、Smart Gateway 零轉發直連優化，以及基於記憶體的一致性雜湊 (Consistent Hashing) 演算法推演。
 
 ---
 
