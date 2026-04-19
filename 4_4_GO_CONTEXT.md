@@ -162,7 +162,7 @@ func GetUser(ctx context.Context) *User {
 
 ---
 
-## 5. 總結：使用的黃金法則
+## 5. 第五樂章：使用的黃金法則 (Summary)
 
 1.  **Context 均為第一個參數**：函數簽名裡，`ctx` 永遠放第一個參數 (`func DoExample(ctx context.Context, ...)`).
 2.  **不要存在 Struct 裡**：Context 是屬於流程調用的，不應該變成 Struct 的成員變數 (Member Field)。

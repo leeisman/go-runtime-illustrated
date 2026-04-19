@@ -1,5 +1,10 @@
 # Book 5.2: Snowflake (Distributed ID - 雪花算法)
 
+分散式 ID 的難題是：不能集中發號，卻又不能重複。
+Snowflake 的答案是把時間、機器編號與序列號塞進同一個 64-bit 整數，讓每個節點都能獨立生產全域唯一 ID。
+
+---
+
 ## 1. 第一樂章：隱喻 (The Metaphor - The Independent Ticket Booths)
 
 想像一個巨大的遊樂園，有 1000 個售票亭 (微服務節點) 同時在賣票。

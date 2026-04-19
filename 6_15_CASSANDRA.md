@@ -1,4 +1,4 @@
-# Book 6.15: Apache Cassandra 底層深潛
+# Book 6.15: Apache Cassandra 底層深潛 (Apache Cassandra Deep Dive)
 
 如果說 MySQL 是「強紀律的金融金庫」，MongoDB 是「彈性快速的 JSON 裝甲車」，那麼 Cassandra 就是一台**「為了高吞吐 Append-Only 寫入而生的無敵流水帳機器」**。
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 1. 儲存引擎：LSM-Tree 為什麼碾壓 B-Tree 的寫入？
+## 1. 第一樂章：儲存引擎：LSM-Tree 為什麼碾壓 B-Tree 的寫入？
 
 Cassandra 底層採用的是 **LSM-Tree (Log-Structured Merge Tree)**，而不是 MySQL / MongoDB 使用的 B-Tree。這個選擇從根本上決定了它的寫入霸道之處。
 
@@ -44,7 +44,7 @@ B-Tree 的問題：**每次寫入都可能引發隨機 I/O**，對 SSD 的寫入
 
 ---
 
-## 2. 讀取路徑：為什麼 LSM-Tree 讀取比較貴？
+## 2. 第二樂章：讀取路徑：為什麼 LSM-Tree 讀取比較貴？
 
 寫入的天堂背面，是讀取需要付出的代價：
 
@@ -75,7 +75,7 @@ Bloom Filter 是緩解這個問題的核心武器，它能以極小的記憶體�
 
 ---
 
-## 3. 資料模型：Partition Key + Clustering Key 的藝術
+## 3. 第三樂章：資料模型：Partition Key + Clustering Key 的藝術
 
 Cassandra 的資料模型設計是整個系統最重要的架構決定，設計好就飛，設計爛就死。
 
@@ -130,7 +130,7 @@ CREATE TABLE wallet_events (
 
 ---
 
-## 4. 一致性等級：CAP 定理的現實抉擇
+## 4. 第四樂章：一致性等級：CAP 定理的現實抉擇
 
 Cassandra 是一個 **AP 系統（高可用 + 分區容忍）**，但它允許你在查詢層面動態調整一致性：
 
@@ -157,7 +157,7 @@ Cassandra 是一個 **AP 系統（高可用 + 分區容忍）**，但它允許�
 
 ---
 
-## 5. 輕量交易 LWT：Cassandra 的樂觀鎖
+## 5. 第五樂章：輕量交易 LWT：Cassandra 的樂觀鎖
 
 前面提到 Cassandra 的 **Lightweight Transaction (LWT)** 可以做冪等性保護：
 
@@ -183,7 +183,7 @@ LWT 使用 **Paxos 共識協議**，需要兩輪網路 Round Trip（Prepare + Ac
 
 ---
 
-## 6. Compaction 策略：Cassandra 的背景「整理書架」
+## 6. 第六樂章：Compaction 策略：Cassandra 的背景「整理書架」
 
 隨著資料越來越多，SSTable 也越積越多，Cassandra 的背景 Compaction 需要定期合併它們。選對策略非常重要：
 
@@ -219,7 +219,7 @@ Level 0 → Level 1 → Level 2 → ...
 
 ---
 
-## 7. 叢集架構：Gossip + 一致性 Hash + Virtual Nodes
+## 7. 第七樂章：叢集架構：Gossip + 一致性 Hash + Virtual Nodes
 
 Cassandra 叢集沒有 Master，所有節點**完全平等 (Peer-to-Peer)**。
 
@@ -252,7 +252,7 @@ Node D (75~100%)   Node B (25~50%)
 
 ---
 
-## 8. 實戰場景總結
+## 8. 第八樂章：實戰場景總結
 
 | 場景 | 推薦 | 原因 |
 |------|------|------|

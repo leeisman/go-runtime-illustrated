@@ -1,10 +1,12 @@
-# Book 6.5: RocketMQ Architecture & Advanced Features (業務邏輯的守護神)
+# Book 6.10: RocketMQ 架構與進階特性：業務邏輯的守護神 (RocketMQ Architecture & Advanced Features)
 
 如果有個系統，既需要 Kafka 的高吞吐，又需要傳統 MQ (ActiveMQ/RabbitMQ) 的複雜業務功能 (延遲、事務、過濾)，那就是 **Apache RocketMQ**。
 
 在阿里巴巴的雙 11 大促中，RocketMQ 承擔了兆級別的訊息流轉。它與 Kafka 最大的區別在於：**Kafka 專注於 Log (日誌)，而 RocketMQ 專注於 Business (業務)。**
 
-## 0. Philosophy: Why RocketMQ? (微服務的解耦神器)
+---
+
+## 1. 第一樂章：為什麼需要 RocketMQ？(Philosophy)
 在微服務架構中，RocketMQ 的核心價值在於 **完全解耦 (Decoupling)**。
 
 *   **Sync (RPC/HTTP)**:
@@ -23,7 +25,7 @@ RocketMQ 就像一個 **「懂業務的智慧郵差」**，而 Kafka 比較像 *
 
 ---
 
-## 1. The Core Architecture Difference (存儲設計)
+## 2. 第二樂章：核心架構差異 (Storage Design)
 
 為什麼我們說 RocketMQ 可以支援 **數萬個 Topic** 而 Kafka 不行？秘密在於硬碟的寫入方式。
 
@@ -103,7 +105,7 @@ RocketMQ 與 Kafka 一樣依賴 **Page Cache**。如果 Consumer 追得緊 (Tail
 
 ---
 
-## 2. The Killer Feature: Transactional Messages (分散式事務)
+## 3. 第三樂章：分散式事務訊息 (Transactional Messages)
 
 這是 RocketMQ 最強大的武器，完美解決了微服務中的 **"Dual Write"** 問題 (要寫 DB 又要發 MQ，如何保證原子性？)。
 
@@ -177,7 +179,7 @@ func main() {
 
 ---
 
-## 3. Other Advanced Features (其他特異功能)
+## 4. 第四樂章：Other Advanced Features (其他特異功能)
 
 ### 3.1 Delay Scheduling (延時訊息)
 *   **Kafka**: 原生不支援。需要自行開發中間層 (Timer Wheel)。
@@ -193,7 +195,7 @@ func main() {
 
 ---
 
-## 4. Summary Comparision
+## 5. 第五樂章：總結 (Summary) Comparision
 
 | Feature | Kafka | RocketMQ |
 | :--- | :--- | :--- |
@@ -211,7 +213,7 @@ func main() {
 
 ---
 
-## 5. Operational Survival Guide (維運生存指南)
+## 6. 第六樂章：Operational Survival Guide (維運生存指南)
 使用 RocketMQ 進行微服務解耦 (Decoupling) 是「兩面刃」。好處是上游發完就跑，壞處是**下游死活上游完全不知情**。為了避免這種「異步變遺忘」，必須嚴格執行以下規範：
 
 ### 5.1 Physical Isolation (物理隔離原則)

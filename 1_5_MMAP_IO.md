@@ -1,8 +1,10 @@
-# Book 1.5: Memory Mapped I/O (mmap) - 記憶體與硬碟的時空隧道
+# Book 1.5: 記憶體映射 I/O：記憶體與硬碟的時空隧道 (Memory Mapped I/O / mmap)
 
 在高效能的 IO 編程中 (資料庫、Kafka、RocketMQ)，**mmap** 是一個被反覆提及的神級優化。它打破了我們對「讀檔」和「寫檔」的傳統認知。
 
-## 1. 傳統 I/O vs mmap
+---
+
+## 1. 第一樂章：傳統 I/O vs mmap
 
 ### 1.1 傳統 I/O (`read` / `write`)
 這是一次「搬家」的過程。
@@ -27,7 +29,7 @@ data[0] = 'A' // 直接修改
 
 ---
 
-## 2. Deep Dive: 寫下去後，OS 怎麼知道要存檔？ (The Dirty Bit Magic)
+## 2. 第二樂章：寫下去後，OS 怎麼知道要存檔？(The Dirty Bit Magic)
 
 您問到：「我只是改了記憶體 `data[0] = 'A'`，OS 沒介入，它怎麼知道這頁髒了？」
 
@@ -55,7 +57,7 @@ OS 並不知道您「這一微秒」寫了什麼，但它有背景線程來檢�
 
 ---
 
-## 3. Go 實戰：使用 syscall.Mmap
+## 3. 第三樂章：Go 實戰：使用 syscall.Mmap
 
 在 Go 中，我們通常不直接用 `syscall`，而是用封裝好的庫 (如 `gommap` 或 `etcd/pkg/fileutil`)，但原理一樣。
 
@@ -101,7 +103,7 @@ func main() {
 
 ---
 
-## 4. Drawbacks (mmap 不是萬靈丹)
+## 4. 第四樂章：mmap 不是萬靈丹 (Drawbacks)
 
 雖然 mmap 少了 Copy，但它也有代價：
 
@@ -116,7 +118,9 @@ func main() {
 3.  **Size Limit**:
     *   在 32-bit 系統上很慘。但在 64-bit 系統上，Address Space 很大，通常不是問題。但 Go/Java 的 Array index 還是 int (2GB限制)，所以 RocketMQ 才會切分 CommitLog。
 
-## 5. Summary
+---
+
+## 5. 第五樂章：總結 (Summary)
 
 | Feature | Standard I/O (`read/write`) | Memory Mapped (`mmap`) |
 | :--- | :--- | :--- |

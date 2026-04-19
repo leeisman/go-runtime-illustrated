@@ -1,4 +1,4 @@
-# Book 7.7: K8s 零停機部署：Probes、Rolling Update 與 Go 優雅退場
+# Book 7.7: K8s 零停機部署：Probes、Rolling Update 與 Go 優雅退場 (K8s Zero-Downtime Deployment)
 
 如果說 **7.6** 講的是「流量怎麼進來」，那 **7.7** 要講的就是「Pod 怎麼安全地上線，以及怎麼完美地下線」。
 
@@ -9,7 +9,7 @@
 
 ---
 
-## 1. Rolling Update：K8s 的零停機換班機制
+## 1. 第一樂章：Rolling Update：K8s 的零停機換班機制
 
 當你執行 `kubectl apply` 推送新版本時，K8s 不會把所有舊 Pod 一次殺死再一起重啟（那叫 Recreate 策略，會造成全面停機）。預設採用的是 **Rolling Update (滾動更新)**。
 
@@ -38,7 +38,7 @@ Step 4 (Done):    [v1] [v1] [v2✅]            ← 繼續下一輪
 
 ---
 
-## 2. 三種探針 (Probes)：Pod 的生命體徵監測
+## 2. 第二樂章：三種探針 (Probes)：Pod 的生命體徵監測
 
 ### (1) Readiness Probe：「我準備好接客了嗎？」
 這是最重要的探針。只有當 Readiness Probe 回傳成功，K8s 才會把這個 Pod 的 IP 加入 Service 的 Endpoint 清單裡。
@@ -116,7 +116,7 @@ startupProbe:
 
 ---
 
-## 3. 舊 Pod 的退場：SIGTERM、preStop 與 Graceful Shutdown
+## 3. 第三樂章：舊 Pod 的退場：SIGTERM、preStop 與 Graceful Shutdown
 
 當 K8s 決定要關閉一個舊 Pod 時（不管是因為 Rolling Update 還是縮容），它會執行以下極度精密的「送葬儀式」：
 
@@ -220,7 +220,7 @@ grpcServer.GracefulStop()
 
 ---
 
-## 4. 完整生命週期時序圖
+## 4. 第四樂章：完整生命週期時序圖
 
 ```
 時間軸 ──────────────────────────────────────────────────►
@@ -244,7 +244,7 @@ grpcServer.GracefulStop()
 
 ---
 
-## 5. 常見的致命錯誤
+## 5. 第五樂章：常見的致命錯誤
 
 | 錯誤 | 後果 | 解法 |
 |------|------|------|

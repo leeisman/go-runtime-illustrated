@@ -1,5 +1,10 @@
 # Book 3.13: The Interface (介面)
 
+Interface 是 Go 彈性的來源，也是很多 nil trap 與配置成本的來源。
+這一章會把 `eface`、`iface`、method table 與 boxing 拆開，讓你知道「一個值被放進 interface」時到底多了哪些東西。
+
+---
+
 ## 1. 第一樂章：隱喻 (The Metaphor - The Universal Proxy)
 
 在 Go 的世界裡，物件 (Struct) 分為兩種身分：
@@ -134,7 +139,7 @@ var i interface{} = x // Alloc?
 
 ---
 
-## 5. 終章 (Finale)：不要妖魔化，但要會監控
+## 5. 第五樂章：總結 (Finale)：不要妖魔化，但要會監控
 
 經過底層拆解，我們發現 Interface 並不可怕。它不是黑魔法，只是一個明碼標價的結構體。
 

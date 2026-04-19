@@ -231,7 +231,7 @@ func (g *Group) tryGo(f func() error) bool {
 
 ---
 
-## 5. 總結
+## 5. 第五樂章：總結
 
 `errgroup` 是 Go 併發模式中的 **「聚合器 (Aggregator)」**。
 它解決了微服務中最常見的「多對一」呼叫場景。

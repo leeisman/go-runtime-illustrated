@@ -3,7 +3,9 @@
 在深入研究封包的原子結構之前，我們先在 **Application Layer (應用層)** 俯瞰整個網路世界。
 作為後端工程師，我們每天都在處理 `Request` 和 `Response`，但這中間到底發生了什麼？
 
-## 1. The Three Pillars (網路三大基石)
+---
+
+## 1. 第一樂章：網路三大基石 (The Three Pillars)
 
 如果把網路比喻成現實世界的物流系統，我們需要三個核心要素：
 
@@ -63,7 +65,7 @@ IP 地址的設計是 **「層級式 (Hierarchical)」** 的，就像現實地�
 
 ---
 
-## 2. The Client-Server Model (主從架構)
+## 2. 第二樂章：主從架構 (Client-Server Model)
 
 網路通訊最經典的模式就是 **Client (發起者)** 與 **Server (監聽者)**。
 
@@ -160,7 +162,7 @@ IP 地址的設計是 **「層級式 (Hierarchical)」** 的，就像現實地�
 
 ---
 
-## 3. Performance Tuning & Architecture (HTTPS 效能調校)
+## 3. 第三樂章：HTTPS 效能調校與架構 (Performance Tuning & Architecture)
 
 既然知道了 HTTPS 的層層關卡，身為架構師，我們不需要管 `net.Dial` 怎麼寫 (那是 lib 做的)，我們需要關注的是 **「HTTPS 對系統吞吐量的衝擊」** 以及 **「關鍵調校參數」**。
 
@@ -291,7 +293,7 @@ CDN 就像一個聰明的翻譯官，它能幫您做很多 Nginx 做不到(或�
 
 ---
 
-## 4. Summary: The Architect's View
+## 4. 第四樂章：架構師視角總結 (The Architect's View)
 這一章我們從最基礎的「門牌號碼 (IP)」一路講到了「雲端架構 (CDN)」。身為架構師，這幾個核心觀念必須刻在腦海裡：
 
 1.  **連線是昂貴的 (The Cost of Connection)**:

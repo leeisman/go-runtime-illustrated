@@ -1,4 +1,4 @@
-# Book 6.12: Proto.Actor vs Go Channel：底層資料結構的降維打擊
+# Book 6.12: Proto.Actor vs Go Channel：底層資料結構的降維打擊 (Proto.Actor vs Go Channel)
 
 在 Actor 模式中，「信箱 (Mailbox)」的效能就是整個系統的天花板。
 Go 原生的 `channel` 與 Proto.Actor 框架的 MPSC 佇列，本質上都是讓多個 Producer 安全地把訊息丟給一個 Consumer。
@@ -6,7 +6,7 @@ Go 原生的 `channel` 與 Proto.Actor 框架的 MPSC 佇列，本質上都是�
 
 ---
 
-## 1. Proto.Actor 的底層：MPSC 無鎖鏈結串列
+## 1. 第一樂章：Proto.Actor 的底層：MPSC 無鎖鏈結串列
 
 Proto.Actor 的信箱核心是一個 **MPSC (Multi-Producer, Single-Consumer) 無鎖鏈結串列**。
 它的物理佈局長這樣：
@@ -63,7 +63,7 @@ func (q *MPSCQueue) Pop() *Node {
 
 ---
 
-## 2. Go Channel 的底層：多步驟的 Mutex + RingBuffer
+## 2. 第二樂章：Go Channel 的底層：多步驟的 Mutex + RingBuffer
 
 Go 原生的 `channel` 被設計為通用的 **MPMC (Multi-Producer, Multi-Consumer)** 管道。它永遠要保護自己不被任何方向的併發破壞，所以它的底層結構 `hchan` 複雜很多：
 
@@ -129,7 +129,7 @@ Step 3: 檢查 RingBuffer 是否有資料 (qcount > 0)？
 
 ---
 
-## 3. 兩者的物理代價對比
+## 3. 第三樂章：兩者的物理代價對比
 
 | 操作 | Proto.Actor MPSC | Go Channel (有 buffer) |
 |------|-----------------|----------------------|
@@ -145,7 +145,7 @@ Step 3: 檢查 RingBuffer 是否有資料 (qcount > 0)？
 
 ---
 
-## 4. 那 Go Channel 什麼時候用？
+## 4. 第四樂章：那 Go Channel 什麼時候用？
 
 這不代表 Go Channel 一無是處。它的優勢是：
 - **零依賴、語言原生、易讀易維護**：99% 的業務場景 buffered channel 完全夠用。
@@ -160,7 +160,7 @@ Step 3: 檢查 RingBuffer 是否有資料 (qcount > 0)？
 
 ---
 
-## 5. 實戰架構設計：包網高併發錢包系統
+## 5. 第五樂章：實戰架構設計：包網高併發錢包系統
 
 現在把前面所有的知識點組裝起來，設計一個能應付包網 (Online Betting) 場景的超高併發錢包系統。
 這個場景的極端挑戰在於：同一個玩家可能在百毫秒內接收下注成功、賠付、退款等多筆並發操作，任何一筆帳目都不能出錯、不能重複、不能遺漏。
@@ -345,7 +345,7 @@ Actor 檢查餘額是否足夠
 
 ---
 
-## 6. 終極殺招：Cluster Sharding 與動態路由 (Location Transparency)
+## 6. 第六樂章：終極殺招：Cluster Sharding 與動態路由 (Location Transparency)
 
 在微服務的架構裡，最簡單的分流方式是「靜態路由 (Static Sharding)」，例如在 Nginx 寫死 `uid % 1024`，讓 1024 個 Pod 固定負責綁定的玩家。
 但這種靜態設計有三個微服務的致命傷：

@@ -7,7 +7,7 @@
 
 ---
 
-## 1. The Russian Doll (封裝: Encapsulation)
+## 1. 第一樂章：俄羅斯娃娃式封裝 (Encapsulation)
 
 當 Go 的 `conn.Write("Hello")` 發生時，OS 就像打包俄羅斯娃娃一樣，給資料穿上一層又一層的衣服。
 
@@ -28,7 +28,7 @@
 
 ---
 
-## 2. The Physical Constraints (MTU & MSS)
+## 2. 第二樂章：物理限制 (MTU & MSS)
 
 為什麼我們不能一次把 16KB 的 TLS Record 直接丟進網線？
 因為乙太網 (Ethernet) 的物理標準規定：**一個 Frame 最大只能裝 1500 Bytes**。這就是 **MTU**。
@@ -96,7 +96,7 @@ UDP 是直腸子，給什麼送什麼。
 *   **UDP**: `[App]` -> `[IP Packet]`
 
 ---
-## 3. The Ops Nightmare: Path MTU Discovery (PMTUD)
+## 3. 第三樂章：Path MTU Discovery 的運維惡夢 (PMTUD)
 
 這是 SRE 最常遇到的鬼故事：**「Ping 得到的，但網頁打不開 (或是卡在一半)。」**
 
@@ -115,7 +115,7 @@ UDP 是直腸子，給什麼送什麼。
 
 ---
 
-## 4. The Journey (Routing & Hops)
+## 4. 第四樂章：路由與跳點旅程 (Routing & Hops)
 
 當封包被切好 (Fragmented) 並設好大小後，它開始了旅程。
 
@@ -137,7 +137,7 @@ UDP 是直腸子，給什麼送什麼。
 
 ---
 
-## 5. Summary
+## 5. 第五樂章：總結 (Summary)
 這一章我們看到了 **物理層** 的殘酷：
 1.  **MTU 1500** 限制了我們一次能傳送的大小，導致 16KB 的 TLS Record 必須被切成 11-12 個碎片。
 2.  只要其中 **任何一個碎片** 在路上被丟棄 (Drop)，整個 16KB 的解密就會卡住 (Head-of-Line Blocking)。

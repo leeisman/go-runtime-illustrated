@@ -7,7 +7,7 @@
 
 ---
 
-## 0. 迷思破解：Socket 到底是什麼？
+## 1. 第一樂章：Socket 的真身 (What Is a Socket?)
 
 很多初學者常常會把 Socket 跟 TCP/UDP 混為一談，甚至誤以為 Socket 是一種獨立的網路傳輸協定。其實它們完全處於不同的維度：
 
@@ -24,7 +24,7 @@
 
 ---
 
-## 1. The Strategy: Stream vs Datagram
+## 2. 第二樂章：串流與資料報 (Stream vs Datagram)
 
 這是你在寫程式時的第一個選擇：`net.Dial("tcp")` 還是 `net.Dial("udp")`？
 這兩個字串的背後，對應著兩個截然不同的 **Kernel Syscall**：
@@ -33,17 +33,18 @@
     *   關鍵字是 **STREAM (串流)**。
     *   告訴 OS：這是一條水管，你要幫我負責順序、重組、流量控制。
 *   **UDP**: `syscall.Socket(AF_INET, SOCK_DGRAM, 0)`
-    *   關鍵字是 **DGRAM (数据报/信件)**。
-    *   告訴 OS：這是一封一封的信，我給你什麼你就送什麼，**不需要 Nagle，不需要等待，現在就送！**
+    *   關鍵字是 **DGRAM (資料報/信件)**。
+    *   告訴 OS：這是一封一封的信，我給你什麼你就送什麼，不建立連線、不做 TCP 那套重傳與排序。
 
-### 1.1 TCP (The Stream / 串流)
-*   **哲學**: 「我保證送到，而且順序正確。」
+### 2.1 TCP (The Stream / 串流)
+*   **哲學**: 「只要連線還有效，我會盡力提供可靠、有序的 Byte Stream；如果真的失敗，就讓你看到錯誤。」
 *   **抽象**: **Byte Stream (水管)**。
     *   沒有封包邊界。你 Write 兩次 "Hello", "World"，對方可能 Read 一次 "HelloWorld"。
     *   **Buffering (緩衝機制)**:
         *   **MSS (1460 bytes) 怎麼來的？**
-            *   這是物理限制。Ethernet 規範的 **MTU (Maximum Transmission Unit)** 通常是 **1500 bytes**。
-            *   扣除 **IP Header (20 bytes)** 和 **TCP Header (20 bytes)**，剩下能裝資料的空間就是 **1460 bytes**。
+            *   這是常見網路環境下的典型值。Ethernet 的 **MTU (Maximum Transmission Unit)** 通常是 **1500 bytes**。
+            *   若使用 IPv4，且沒有額外 options，扣除 **IP Header (20 bytes)** 和 **TCP Header (20 bytes)**，剩下能裝資料的空間就是 **1460 bytes**。
+            *   但實際 MSS 會受 Path MTU、IPv6、TCP options、VPN/Tunnel 等因素影響，所以 1460 是常見例子，不是宇宙常數。
         *   **發送時機 (Nagle's Algorithm)**:
             *   Kernel 為了效率，預設不會讓你「寫 1 byte 就送 1 個封包」(避免 40 bytes Header 只載 1 byte Data 的浪費)。
             *   **規則**: 
@@ -58,26 +59,26 @@
     *   **Head-of-Line Blocking**: 前面封包丟了，後面的就算到了也不能給 App，必須等重傳。
     *   **延遲**: 握手、慢啟動、重傳都會增加 Latency。
 
-### 1.2 UDP (The Datagram / 封包)
+### 2.2 UDP (The Datagram / 封包)
 *   **哲學**: 「我射後不理，越快越好。」
 *   **抽象**: **Message (信件)**。
     *   保留邊界。你 Write 一次，網路上就跑一顆包。
-    *   **No Buffering**: 直接封裝成 IP 封包丟給網卡。
+    *   **No Stream Buffering**: 不像 TCP 那樣維護一條連續 Byte Stream，也不替你做排序、重傳、流量控制。但 OS/NIC 仍然會有發送佇列、接收佇列與路由處理。
 *   **優勢**:
     *   **即時性**: 適合語音、視訊、FPS 遊戲。掉包就掉包，不用等。
     *   **簡單**: 支援廣播 (Broadcast) 和群播 (Multicast)。
 
 ---
 
-## 2. The Connection (連線的解剖)
+## 3. 第三樂章：連線的解剖 (Anatomy of a Connection)
 
 TCP 是 **Stateful** 的，UDP 是 **Stateless** 的。
 
-### 2.1 連線的物理真相
+### 3.1 連線的物理真相
 *   **沒有線**: 網路上沒有實體線路連著雙方。
 *   **State in RAM**: 所謂 `ESTABLISHED`，只是雙方 Kernel 在記憶體裡各開一個 Struct (`TCB`)，記錄對方的 IP、Port 和目前的 Sequence Number。
 
-### 2.2 The 3-Way Handshake (建立連線)
+### 3.2 The 3-Way Handshake (建立連線)
 為了同步這場「集體幻覺」，TCP 需要三次握手：
 1.  **SYN (Seq=X)**: "我是 A，我從第 X 頁開始講。"
 2.  **SYN-ACK (Seq=Y, Ack=X+1)**: "收到。我是 B，我從第 Y 頁開始講。"
@@ -86,18 +87,18 @@ TCP 是 **Stateful** 的，UDP 是 **Stateless** 的。
 **為什麼要 3 次？**
 為了防止 **Ghost Packets (歷史殘存封包)** 讓 Server 誤判建立連線而浪費記憶體。
 
-### 2.3 The 4-Way Wave (斷開連線)
+### 3.3 The 4-Way Wave (斷開連線)
 因為 TCP 是全雙工 (Full Duplex)，兩個方向要分開關閉。
 *   A 發 `FIN` (Close) -> B 回 `ACK`。(A 閉嘴了，但 B 還能說話)。
 *   B 發 `FIN` (Close) -> A 回 `ACK`。(雙方都閉嘴 -> `CLOSED`)。
 
 ---
 
-## 3. The Reliability (可靠性機制)
+## 4. 第四樂章：可靠性的幻覺 (The Illusion of Reliability)
 
 TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
 
-### 3.1 Sequence & ACK (封包拆解與確認的藝術)
+### 4.1 Sequence & ACK (封包拆解與確認的藝術)
 
 當我們想保證網路包裹「絕對不掉」時，人類最直覺的想法通常是：**「我們給實體包裹編號吧！這是第 1 號包裹、那是第 2 號包裹。」**
 
@@ -105,10 +106,12 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
 這就是初學者最常卡住的地方。TCP 根本不在乎你發出了幾個「實體包裹」，因為 TCP 在設計理念上是一條連綿不絕的「位元流 (Byte Stream)」。
 它的做法是：**不給外在包裹編號，而是給內容物裡面的「每一個 Byte (也就是游標的刻度)」編號。**
 
-這有什麼好處？這能完美對付**封包碎片化重組 (Fragmentation)** 的難題。
+這有什麼好處？這能完美對付 **TCP 分段與重組 (Segmentation & Reassembly)** 的難題。
 可以這樣理解：假設你在 Go 裡面執行了 `conn.Write( 4000 Bytes 的照片 )`。對於 TCP 來說，這就像是一條從 `0` 到 `3999`，總長 4000 毫米的**捲尺**。
 
-由於網卡與乙太網路的物理限制 (你的一個實體封包最多就是只能塞下 `MSS = 1460 Bytes`)，所以 OS Kernel 只能拿出剪刀，把這條捲尺直接剪成三段，分批裝進包裹寄出：
+為了說明方便，以下先把初始序號簡化成 `0`；真實 TCP 連線會使用隨機的 Initial Sequence Number。
+
+由於 MTU 與 MSS 的限制 (以下用常見的 `MSS = 1460 Bytes` 當例子)，OS Kernel 只能拿出剪刀，把這條捲尺直接剪成三段，分批裝進包裹寄出：
 *   剪下第一段送出：長度從刻度 Byte 0 ~ 1459
 *   剪下第二段送出：長度從刻度 Byte 1460 ~ 2919
 *   剪下第三段送出：長度從刻度 Byte 2920 ~ 3999
@@ -138,9 +141,9 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
 *   **低開銷計算**: 雖然有 4000 個 Byte，但 TCP 表頭並不會塞 4000 個數字。表頭只會記錄這塊包裹的 **「起始號碼 (Seq)」**，然後 Kernel 會自動加上 payload 大小，推算出尾碼。
 *   **預期心理 (ACK)**: Server 回傳的 `ACK=1460`，實質意義是它正在 **「期待」** 下一個字節從 1460 開始，這也是一種「擔保 1459 之前全數抵達」的機制。
 
-#### 情況 B：碎片遺失與重傳 (為何必須是 Byte 編號？)
+#### 情況 B：分段遺失與重傳 (為何必須是 Byte 編號？)
 為何不單純用「第 1 號包、第 2 號包」作為表頭？請看這個混亂的網路情境：
-第二個包裹 (Seq=1460) 在路上 **掉包了**。更不幸的是，準備重傳時，網路環境非常差，這一次 OS Kernel 決定把它切得更小塊 (例如一次 1000 Bytes) 來增加發送成功率！
+第二個包裹 (Seq=1460) 在路上 **掉包了**。準備重傳時，Kernel 可能因為 Path MTU、壅塞控制或實作策略，使用跟原本不同的分段大小。為了方便觀察，我們假設這一次它改成一次 1000 Bytes：
 
 ```text
 發送方 (Client)                                          接收方 (Server)
@@ -150,14 +153,14 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
 ❌ 原本的第二塊丟失了 ( Seq=1460, 長度 1460 )
    (等待超時，Client 準備重傳)
 
-⚠️ 網路環境變差，這一次 Kernel 只敢切小一點 (每次 1000 Bytes) 就發送
+⚠️ 重傳時，Kernel 使用不同的分段大小 (每次 1000 Bytes)
 
-📦 碎片化重傳 - 拆包 2-1
+📦 分段重傳 - 拆包 2-1
 [ TCP 表頭: Seq=1460 ] + [ 資料: Byte 1460 ~ 2459 ] ───▶
                                                         (Server 發現剛好接上缺口！)
                                                 ◀─────── [回傳表頭: ACK=2460]
 
-📦 碎片化重傳 - 拆包 2-2
+📦 分段重傳 - 拆包 2-2
 [ TCP 表頭: Seq=2460 ] + [ 資料: Byte 2460 ~ 2919 ] ───▶
                                                         (原第二塊的缺口終於補齊！)
                                                 ◀─────── [回傳表頭: ACK=2920]
@@ -174,7 +177,7 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
 *   **殭屍封包的誕生**: 試想，在現今動輒 10 Gbps 的高速光纖網路下，傳滿 4GB 只需要**不到幾秒鐘的時間**，也就是捲尺每幾秒鐘就會瘋狂轉一圈。此時，假設網路上有一個「5 秒前在某台路由器迷路被卡住的舊封包」突然送達 Server。這個舊封包身上的 Seq Number，極有可能跟「現在剛剛好轉完一圈的新封包」一模一樣！如果 Kernel 傻傻地收下它，這張照片的某個區塊就會被這個「前世的舊封包」覆蓋，造成災難性的資料錯亂。
 *   **終極防禦 (PAWS)**: 為了解決大流量下編號暴衝導致的衝突，現代作業系統都幫你默默啟用了一個附加選項：**TCP Timestamps (時間戳)**。這就像是在包裹的編號旁邊，強制加蓋了一個當時出廠的時鐘印章。接收端的 Kernel 只要發現「編號雖然正確，但時間看來是從過去穿越來的」，就會毫不留情地識破並丟棄這個「殭屍封包」。這個拯救了現代高速網路的機制，就叫做 **PAWS (Protection Against Wrapped Sequences)**。
 
-### 3.2 Flow Control (滑動窗口 & 背壓)
+### 4.2 Flow Control (滑動窗口 & 背壓)
 *   **問題**: 發送方 (Sender) 發太快，接收方 (Receiver) 處理不完怎麼辦？
     *   **場景**: 一萬個玩家同時灌爆 Server，Server 程式 (User Space) 來不及 `Read`，導致 Kernel 裡的 Buffer 被填滿。
 *   **解法 (Backpressure / 背壓)**: 
@@ -182,7 +185,7 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
     *   接收方 (Receiver) 會隨時告訴發送方：「我的 Buffer 還剩下多少空間」。
 *   **Zero Window (強制暫停)**: 
     *   當 Buffer 滿了，Receiver 回傳 `Window = 0`。
-    *   **後果**: Sender 的 Kernel 收到後，會立刻**停止發送**任何資料 (即使 App 呼叫 `Write` 也會被 Block 住)。
+    *   **後果**: Sender 的 Kernel 收到後，會立刻**停止把新資料送上網路**。如果本機 Send Buffer 還有空間，App 的 `Write` 可能仍然先成功；但只要 Send Buffer 也被塞滿，後續 `Write` 就會被 Block、Timeout，或回傳錯誤。
     *   **意義**: 這是 TCP 最重要的自我保護機制。它讓 Server 有權力叫 Client 閉嘴，防止系統被流量淹沒而崩潰 (OOM)。
 
 #### 實戰查修：是誰在壓制誰？(CPU 滿載引發的連鎖塞車)
@@ -195,15 +198,15 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
     但還有一種**極端情況**：你的 App 瞬間往 Buffer 塞滿了龐大資料 (`Write` 暫時成功)，但隨即整台主機的 CPU 被鎖死。導致作業系統裡負責打包封包、發送硬體中斷給網卡的 Kernel 執行緒 (如 `ksoftirqd`) 也被餓死分不到 CPU。這時明明實體網路極度順暢，但你的資料就是會卡在 `Send-Q` 裡面遲遲送不出去！
 
 
-### 3.3 假性成功與 Application ACK (商業邏輯的生與死)
+### 4.3 假性成功與 Application ACK (商業邏輯的生與死)
 這是一個無數資淺工程師踩過的大雷：**「TCP `Write` 成功，絕對不代表對方已經收到資料了！」**
 
 *   **假性成功 (False Success)**：
     由於 Socket 只是應用層與底層溝通的介面，當你在程式裡執行 `err := conn.Write(data)` 且 `err == nil` 的那一瞬間，這只代表一件物理事實：**「資料已經成功從 Userspace 複製進 OS Kernel 的發送緩衝區 (Send Buffer)」**。
-    如果有維修人員在你 `Write` 的當下把伺服器的網路線拔斷，你的 `Write()` 依然會瞬間回傳 `nil` (成功)！此時，資料只是默默地堆積在 Kernel 裡出不去，你的程式卻渾然不知。
+    如果有維修人員在你 `Write` 的當下把伺服器的網路線拔斷，只要 Kernel 還沒偵測到連線失效，而且 Send Buffer 還塞得下資料，你的 `Write()` 依然可能回傳 `nil` (成功)！此時，資料只是默默地堆積在 Kernel 裡出不去，你的程式卻渾然不知。
 *   **L7 的反擊：Req/Rsp 模式的誕生**：
     這也是為什麼現實世界中建立在 TCP 之上的協議 (包含 HTTP, gRPC, 乃至全雙工的 WebSocket 與自定義遊戲協議)，**絕對不會只進行單向盲寫 (Blind Write)**。
-    TCP 提供的是「L4 到達保證 (快遞使命必達)」，但我們做的是分散式系統，需要的是「L7 商業邏輯保證 (業務正確執行)」。
+    TCP 提供的是「L4 可靠位元流」，但我們做的是分散式系統，需要的是「L7 商業邏輯保證 (業務正確執行)」。
     這就是必須設計 **Request / Response 模式**的原因：
     1. 你發送 `Write("扣款請求")`。
     2. 程式立刻卡住 `Read()` 開始等待 (等待回執)。
@@ -212,7 +215,7 @@ TCP 如何在不可靠的 IP 網路上，創造出可靠的幻覺？
     5. 你的 `Read()` 讀到 `200 OK`，你才敢在程式裡將這筆交易標記為成功。
 所以，TCP 是一個基石，而 Req/Rsp 模型才是商業系統用來對抗「假性連線」的城牆。
 
-### 3.4 可靠性的代價與極限 (The Reality of "Reliable")
+### 4.4 可靠性的代價與極限 (The Reality of "Reliable")
 TCP 的「可靠」是指 **資料最終準確 (Accuracy)**，而不是 **時間準時 (Timeliness)**。在現實網路中，您會遇到以下問題：
 
 1.  **Head-of-Line Blocking (隊頭阻塞)**:
@@ -243,21 +246,26 @@ TCP 的「可靠」是指 **資料最終準確 (Accuracy)**，而不是 **時間
     3.  **降速 (Throttling)**: **發送方 (Sender)** 的 OS Kernel 誤判這是因為網路塞車，於是啟動壅塞控制，**將發送速度減半**。(若是下載慢，就是 Server 降速；上傳慢，就是 Client 降速。**簡單說：誰講話沒人聽，誰就閉嘴**)。
     4.  **斷線 (Timeout)**: 若持續掉包超過極限 (約 15~30 分鐘)，OS 最終放棄，判定斷線。
 
-### 3.5 The Evolution: QUIC (HTTP/3 的逆襲)
-既然 TCP 有上述的先天缺陷 (Kernel 僵化、無線誤判、HOL Blocking)，Google 決定另起爐灶，發明了 **QUIC** (基於 **UDP**)。
+### 4.5 The Evolution: QUIC (HTTP/3 的逆襲)
+既然 TCP 有上述的先天缺陷 (Kernel 僵化、連線遷移困難、TCP 層 HOL Blocking)，Google 決定另起爐灶，發明了 **QUIC** (基於 **UDP**)。
 
-*   **User Space TCP**: QUIC 骨子裡就是在 UDP 上面重新實作了一套「現代版的 TCP」。
-    *   **解除封印 (User Space)**: 把壅塞控制 (Congestion Control) 從 Kernel 搬到 Application 層。這意味著可以隨時更新演算法 (如 **BBR**)，不用等幾年一次的 OS 升級。
-    *   **聰明的判斷**: 新的演算法能識別「無線訊號雜訊」與「網路壅塞」的差別，不會因為 Wi-Fi 抖一下就瘋狂降速。
-    *   **消除隊頭阻塞 (No HOL Blocking)**: 在 QUIC 裡，Stream A 掉包只會卡住 Stream A，不會影響 Stream B。但在 TCP 裡，一個封包掉就會卡住全世界。
+*   **User Space Reliable Transport**: QUIC 不是「把 TCP 原封不動搬到 UDP 上」，而是在 UDP 之上重新設計一套可靠傳輸層。
+    *   **解除封印 (User Space)**: 把壅塞控制 (Congestion Control)、重傳策略與連線管理搬到 Application / Library 層。這意味著可以更快迭代演算法 (如 **BBR**)，不用等幾年一次的 OS 升級。
+    *   **內建 TLS**: QUIC 把加密握手整合進協議本身，減少 TCP + TLS 疊在一起時的握手成本。
+    *   **Connection ID**: QUIC 用 Connection ID 維持連線身分。手機從 Wi-Fi 切到 4G，IP/Port 變了，也比較有機會延續同一條邏輯連線。
+    *   **減少隊頭阻塞 (Less HOL Blocking)**: 在 QUIC 裡，Stream A 掉包主要卡住 Stream A，不會像 HTTP/2 over TCP 那樣被底層單一 TCP Stream 卡住所有資料。但單一 QUIC Stream 內部仍然需要維持順序，所以不是魔法般完全沒有 HOL。
 
 (所以當您看到 Chrome 用 UDP 連線 YouTube 時，別驚訝，那是更先進的可靠傳輸協議。)
 
 ---
 
-## 4. Summary
-*   **UDP** 是赤裸的 IP，快但不可靠。
-*   **TCP** 是精密的重型機械（握手、重傳、窗口），可靠但有代價。
-*   **連線** 只是 Kernel 裡的記憶體狀態。
+## 5. 第五樂章：傳輸層的真相 (Summary)
+*   **UDP** 是保留邊界的 Datagram：快、簡單、不替你保證順序與重傳。
+*   **TCP** 是連續的 Byte Stream：可靠、有序，但也帶來握手、重傳、窗口、HOL Blocking 等代價。
+*   **連線** 不是一條真的線，而是雙方 Kernel 裡共同維護的狀態。
+*   **Sequence Number** 編的是 Byte，不是封包；這是 TCP 能重新分段、重傳、拼回原始資料的核心。
+*   **Write 成功** 只代表資料進入本機 Kernel Buffer，不代表對方收到，更不代表商業邏輯完成。
+*   **Application ACK 與 Heartbeat** 才是實戰系統對抗假性成功、殭屍連線與業務不確定性的防線。
+*   **QUIC** 則是新一代的答案：在 UDP 之上，用 User Space 的方式重新設計可靠傳輸。
 
 理解了 L4 的傳輸機制後，下一章 **Book 7.3**，我們將進入應用層 (L7)，看看這些 Byte Stream 如何變成我們熟悉的 **HTTP** 與 **Web 應用**。

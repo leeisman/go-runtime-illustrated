@@ -1,4 +1,4 @@
-# Book 6.11: SQL 的真實生命週期 (Execution Order)
+# Book 6.5: SQL 的真實生命週期 (SQL Execution Order)
 
 很多人 SQL 寫錯，都是因為誤以為 SQL 是從第一行的 `SELECT` 開始跑的。
 其實，MySQL 底層的執行順序跟你寫的順序**完全不同**。
@@ -269,7 +269,7 @@ for _, row := range employees {
 
 ---
 
-## 5. 終章：面試口訣
+## 5. 第五樂章：面試口訣 (Finale)
 
 > **「FROM 拼桌 → ON 牽手 → WHERE 殺人 → GROUP BY 組隊 → HAVING 淘汰隊伍 → SELECT 打包 → ORDER BY 排隊 → LIMIT 截取」**
 

@@ -54,8 +54,8 @@ type entry struct {
 ```
 
 這就像是餐廳有兩個倉庫：
-*   **Read Map**: 前台保溫箱。服務生 (Goroutine) 可以隨便拿，不用問廚師 (Lock)。
-*   **Dirty Map**: 後廚。如果要拿新菜，必須進去問廚師，要排隊 (Lock)。
+*   **Read Map**: 前台公開索引。館長 (Goroutine) 可以直接查，不用申請鎖 (Lock)。
+*   **Dirty Map**: 後台維護索引。如果要查新資料，必須進入行政區排隊申請鎖。
 
 ---
 

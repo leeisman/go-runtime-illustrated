@@ -8,7 +8,7 @@
 
 ---
 
-## 1. 核心底層單位：到底什麼是「Document (文件)」？
+## 1. 第一樂章：核心底層單位：到底什麼是「Document (文件)」？
 
 既然 MongoDB 被稱作「文件資料庫 (Document Database)」，我們就必須先定義，這個 Document 到了最底層的 WiredTiger (WT) 引擎中，到底長什麼樣子？
 
@@ -59,7 +59,7 @@
 
 ---
 
-## 2. 儲存結構：依然是 B-Tree 的天下 (含二級索引機制)
+## 2. 第二樂章：儲存結構：依然是 B-Tree 的天下 (含二級索引機制)
 
 如果你以為 NoSQL 就沒有 B-Tree，那就大錯特錯了。不管上面是存 SQL 還是 JSON，到了作業系統底層，要能高效率地進行範圍查詢 (Range Query) 與樹狀搜尋，最完美的資料結構依舊是 **B-Tree**！WiredTiger 底層正是使用 B-Tree 來管理硬碟上的 Data Files。
 
@@ -126,7 +126,7 @@
 
 ---
 
-## 3. 寫入的藝術：Journal 與 Checkpoint (效能暴力的秘密)
+## 3. 第三樂章：寫入的藝術：Journal 與 Checkpoint (效能暴力的秘密)
 
 MongoDB 為什麼標榜「寫入極快」？因為它的寫入邏輯完美實現了我們在 `1.6 WAL` 中學到的「順序寫入 (Sequential IO) 吊打隨機寫入」的作業系統哲學。
 
@@ -154,7 +154,7 @@ WiredTiger 大約每隔 **60 秒** (或是 Journal 長大到 2GB 時)，就會�
 
 ---
 
-## 4. MVCC 無鎖併發 (讀寫不打架)
+## 4. 第四樂章：MVCC 無鎖併發 (讀寫不打架)
 
 早期 MongoDB 只要有人在寫入這張表 (Collection)，其他人想查詢就會被卡住等待。
 WiredTiger 帶來了進階的 **MVCC (Multi-Version Concurrency Control)**。
@@ -187,7 +187,7 @@ WiredTiger 帶來了進階的 **MVCC (Multi-Version Concurrency Control)**。
 
 ---
 
-## 5. WiredTiger 到底強在哪？(適用場景對比)
+## 5. 第五樂章：WiredTiger 到底強在哪？(適用場景對比)
 
 了解了 WT 引擎的底層運作後，我們就能精準判斷「到底什麼時候該用 MongoDB，什麼時候該乖乖用 MySQL？」
 

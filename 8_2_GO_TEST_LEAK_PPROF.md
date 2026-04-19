@@ -7,7 +7,7 @@
 
 ---
 
-## 1. 第一層防禦：測試期的守門員 (`uber-go/goleak`)
+## 1. 第一樂章：第一層防禦：測試期的守門員 (`uber-go/goleak`)
 
 超過 90% 的 OOM (Out Of Memory) 事件，凶手都不是單純的變數，而是那些**「永遠等不到結局而死當的 Goroutine」**。它不僅霸佔著 2KB 的 Stack，更挾持了它觸及的所有 Heap 變數。
 
@@ -40,7 +40,7 @@ func TestMyActorLogic(t *testing.T) {
 
 ---
 
-## 2. 第二層防禦：Go 界的四大記憶體殺手 (Common Leaks)
+## 2. 第二樂章：第二層防禦：Go 界的四大記憶體殺手 (Common Leaks)
 
 要在源頭避免 Leak，開發者必須在腦海裡對這「四大天王」有極高的警覺心：
 
@@ -66,7 +66,7 @@ func TestMyActorLogic(t *testing.T) {
 
 ---
 
-## 3. 終極防禦：生產環境的 X 光機 (`net/http/pprof`)
+## 3. 第三樂章：終極防禦：生產環境的 X 光機 (`net/http/pprof`)
 
 如果在生產環境 (Production) 監控發現機器的 RAM 從 100MB 緩慢爬升到 8GB 準備 OOM，不要靠靈感瞎猜，請直接祭出核武器 **`pprof`**。
 

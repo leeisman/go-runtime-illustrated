@@ -1,5 +1,10 @@
 # Book 3.16: The Reflection (鏡像世界 - 動態型別的黑魔法)
 
+Reflection 讓 Go 在執行期重新觀察型別，但這份自由不是免費的。
+這一章會把 interface 裡的型別資訊拆出來看，理解三大定律、可修改性，以及為什麼反射程式一定要重視快取。
+
+---
+
 ## 1. 第一樂章：緣起 (The Origin)
 
 Go 是一個 **靜態強型別 (Statically Typed)** 語言。這意味著編譯器在編譯時就知道變數是 `int` 還是 `string`。
@@ -134,7 +139,7 @@ type User struct {
 
 ---
 
-## 6. 終章：謝幕 (Series Finale)
+## 6. 第六樂章：謝幕 (Series Finale)
 
 至此，**Go Memory & Runtime Series** 全書完結！
 

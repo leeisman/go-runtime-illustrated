@@ -1,4 +1,4 @@
-# Book 6.3: The Kafka Producer & IO Internals (吞吐量的怪獸)
+# Book 6.8: Kafka Producer 與 I/O 內幕：吞吐量的怪獸 (Kafka Producer & I/O Internals)
 
 如果說 Redis 是圖書館的「與顧客面對面的櫃台 (Cache)」，MySQL 是「永久保存書籍的地下室 (Storage)」，那麼 **Kafka 就是圖書館的「物流中心 (Logistics Center)」**。
 
@@ -9,7 +9,7 @@ Kafka 不在乎書的內容是什麼，他只在乎一件事：**吞吐量 (Thro
 
 ---
 
-## 1. 核心隱喻：物流卡車與集裝箱 (Async Producer & Batching)
+## 1. 第一樂章：核心隱喻：物流卡車與集裝箱 (Async Producer & Batching)
 
 在 Kafka 的世界裡，我們不再是一本一本書地搬 (Request/Response)，而是用 **大卡車 (Batching)** 來載。
 
@@ -208,7 +208,7 @@ Kafka 不在乎書的內容是什麼，他只在乎一件事：**吞吐量 (Thro
 
 ---
 
-## 2. Deep Dive: 一個訊息的奇幻漂流 (From Client to Disk)
+## 2. 第二樂章：一個訊息的奇幻漂流 (From Client to Disk)
 
 ### 2.0 前導：標準檔案寫入流程 (The Standard Way)
 在進入 Kafka 之前，我們先回顧一下 Linux 標準的寫檔流程。當你在 Go 寫一段 `ioutil.WriteFile` 時：
@@ -300,7 +300,7 @@ Kafka 不在乎書的內容是什麼，他只在乎一件事：**吞吐量 (Thro
 
 ---
 
-## 3. Deep Dive: Consumer Read (The Output Journey)
+## 3. 第三樂章：Consumer 讀取旅程 (The Output Journey)
 
 既然書已經進了圖書館 (Page Cache / Disk)，現在 Consumer 來借書了。
 
@@ -420,7 +420,7 @@ Kafka 的 Log Files 是 **Append-Only** (僅追加) 的結構。
 
 ---
 
-## 4. Go Driver 的實作：三雄爭霸
+## 4. 第四樂章：Go Driver 三雄爭霸 (Driver Comparison)
 
 在高併發場景下，選擇 Driver 需要權衡 **效能 (GC)** 與 **維護性 (CGO)**。
 
@@ -443,7 +443,7 @@ Kafka 的 Log Files 是 **Append-Only** (僅追加) 的結構。
 
 ---
 
-## 5. Consumer & Group High Availability
+## 5. 第五樂章：Consumer Group 高可用 (High Availability)
 > 關於 Consumer Group、Rebalance Protocol 以及 Offset Commit 的完整機制，請參閱專門章節：**[Book 6.4: The Consumer Group](6_4_GO_KAFKA_CONSUMER.md)**。
 
 ---

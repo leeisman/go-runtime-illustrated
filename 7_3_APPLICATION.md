@@ -5,7 +5,7 @@
 
 ---
 
-## 1. HTTP Evolution (Web 協議的進化)
+## 1. 第一樂章：Web 協議的進化 (HTTP Evolution)
 
 **【大前提：HTTP 本質依然是 TCP 連線】**
 無論是 HTTP/1.1 還是 HTTP/2，它們的底層傳輸都是依託於同一條 **TCP 連線 (L4)**。
@@ -48,7 +48,7 @@
 
 ---
 
-## 2. TLS: The Secure Layer (加密層)
+## 2. 第二樂章：加密層 (TLS)
 
 現在幾乎所有 L7 協議都跑在 TLS 之上 (HTTPS, MQTTS, WSS)。
 
@@ -64,7 +64,7 @@ TLS 握手發生在 TCP 握手 **之後**，是額外的開銷。
 
 ---
 
-## 3. WebSocket (即時與雙向)
+## 3. 第三樂章：即時與雙向 (WebSocket)
 
 HTTP 是 "Request-Response" 模型，Server 不能主動說話。
 WebSocket 解決了這個問題。
@@ -90,7 +90,7 @@ WebSocket 解決了這個問題。
 
 ---
 
-## 4. Summary
+## 4. 第四樂章：總結 (Summary)
 *   **HTTP/1.1**: 簡單，但有 L7 阻塞。
 *   **HTTP/2**: 解決 L7 阻塞，但受限於 TCP L4 阻塞。
 *   **HTTP/3**: 用 UDP 解決一切阻塞，是未來的趨勢。

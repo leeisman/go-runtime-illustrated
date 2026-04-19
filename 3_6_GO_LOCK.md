@@ -192,7 +192,9 @@ Go 的 `sync.Mutex` 最大的秘密，就在於它如何處理 **`Unlock()`** �
 *   **純粹佇列 (No Spinners)**: 如果沒有新來的 Goroutine (CAS) 在門口自旋插隊，Runtime 絕對是依照順序叫醒 Goroutine 並把鎖交給它。這完全不依賴 OS，而是 Go Runtime 自己的秩序。
 *   **唯一變數 (The Interruption)**: 順序之所以會被打亂，純粹是因為 **正常模式** 允許「新來的插隊」。如果沒有這些插隊者，`sync.Mutex` 就是一個標準的 FIFO 鎖。
 
-## 5. 第五樂章：驗屍報告 (Profiling)
+---
+
+## 4. 第四樂章：驗屍報告 (Profiling)
 
 既然鎖的代價這麼大，我們怎麼知道程式現在是卡在鎖上？還是單純跑得慢？
 **`pprof`** 提供了兩個專用視角，請務必學會看這兩個指標：

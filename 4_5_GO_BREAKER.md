@@ -250,7 +250,7 @@ func isFailure(err error) bool {
 
 ---
 
-## 5. 總結
+## 5. 第五樂章：總結
 
 **Book 4: Concurrency Patterns & Resilience** 到此告一段落。
 

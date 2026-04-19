@@ -7,7 +7,7 @@
 
 ---
 
-## 1. 為什麼在 K8s 裡自己架 etcd 是脫褲子放屁？
+## 1. 第一樂章：為什麼在 K8s 裡自己架 etcd 是脫褲子放屁？
 
 過去的分散式系統 (如 Dubbo, Spring Cloud early versions) 喜歡自己架設 Zookeeper, Consul 或 etcd 來做「服務註冊與發現 (Service Discovery)」。
 但當系統搬上 Kubernetes 後，K8s 叢集的整個大腦核心 (API Server) 底層，其實**就是一顆超高可用的大型 etcd**！
@@ -27,7 +27,7 @@
 
 ---
 
-## 2. Smart Gateway：零轉發的聰明網關
+## 2. 第二樂章：Smart Gateway：零轉發的聰明網關
 
 一般的微服務架構，Gateway (如 Nginx 或 API Gateway) 很笨，它拿到 Request 後，只能用 Round-Robin 隨便打給後端一個 Pod。如果打錯了，再靠後端的 Pod 互相轉發 (Forward)。
 
@@ -46,7 +46,7 @@
 
 ---
 
-## 3. 一致性雜湊 (Consistent Hashing)：大家如何心電感應？
+## 3. 第三樂章：一致性雜湊 (Consistent Hashing)：大家如何心電感應？
 
 你可能會有一個最大的疑問：
 > 「如果沒有中心化的 etcd 儲存『Shard 45 歸 Pod_A』這個變數，那 Gateway、Pod_A、Pod_B 怎麼不會打架？怎麼能夠確保大家算出來的答案是一樣的？」
@@ -86,7 +86,7 @@
 
 ---
 
-## 4. 實戰 Go 程式碼長怎樣？
+## 4. 第四樂章：實戰 Go 程式碼長怎樣？
 
 你可能會問：「講了這麼多底層魔法，我的 Go 程式碼到底要寫多複雜，才能拿到 K8s API 和算 Hash？」
 答案是：**你一行路由邏輯都不用寫。** 這是全部交由 Actor 框架 (如 Proto.Actor) 在底層幫你封裝好的。
@@ -130,7 +130,7 @@ func main() {
 
 ---
 
-## 5. 結語
+## 5. 第五樂章：結語
 
 現代高併發系統之美，在於**物理層與邏輯層的極致解耦**。
 * **Kubernetes (物理層)**：負責暴力地加機器、減機器、殺掉掛掉的 Pod，並且提供精確的生存名冊。

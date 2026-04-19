@@ -1,6 +1,11 @@
 # Book 2.2: 複雜的代價 (The Heap)
 
-## 第一樂章：無法銷毀的紙條 (The Escape)
+一旦資料不能隨著函數結束而消失，它就必須搬到更大的公共區域。
+這一章要拆解 Heap 的代價：配置、指標追蹤、快取失效，以及最後必然到來的 GC。
+
+---
+
+## 1. 第一樂章：無法銷毀的紙條 (The Escape)
 
 這是一個稍微複雜一點的變體。我們試圖把函數內的變數「帶出來」。
 
@@ -51,7 +56,7 @@ func main() {
 
 ---
 
-## 第二樂章：黑板的啟用 (The Blackboard)
+## 2. 第二樂章：黑板的啟用 (The Blackboard)
 
 在這個場景中，隱喻發生了什麼變化？
 
@@ -77,7 +82,7 @@ func main() {
 
 ---
 
-## 第三樂章：更昂貴的切換 (The Context Switch II)
+## 3. 第三樂章：更昂貴的切換 (The Context Switch II)
 
 還記得之前提到的 **Context Switch 效能損耗** 嗎？在 Heap 的場景下，這個損耗會被**倍數放大**。
 
@@ -117,7 +122,7 @@ func main() {
 
 ---
 
-## 第四樂章：代價 (The Allocation Cost)
+## 4. 第四樂章：代價 (The Allocation Cost)
 
 為什麼我們不乾脆全部用黑板就好？
 
@@ -131,7 +136,7 @@ func main() {
 
 ---
 
-## 第五樂章：清潔時間 (Garbage Collection)
+## 5. 第五樂章：清潔時間 (Garbage Collection)
 
 這就是為什麼我們需要 **GC**。在我們的圖書館裡，**沒有專職的清潔工 (Janitor)**。
 
@@ -146,7 +151,7 @@ func main() {
 
 ---
 
-## 第六樂章：生存法則 (The Survival Rule)
+## 6. 第六樂章：生存法則 (The Survival Rule)
 
 讀完這一章，你只需要記住一個最簡單的判斷準則，就能像編譯器一樣思考：
 
@@ -159,7 +164,7 @@ func main() {
 
 ---
 
-## 第七樂章：反轉思維 (The Optimization)
+## 7. 第七樂章：反轉思維 (The Optimization)
 
 你可能會有個絕妙的想法：「既然後面還有 `main` 的小白紙可以用，為什麼館長不能直接寫在 `main` 的紙上，這樣就不用跑去黑板了？」
 

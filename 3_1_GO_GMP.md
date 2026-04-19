@@ -1,6 +1,11 @@
 # Book 3.1: 書中真正的內容 _rt0_go (The True Content)
 
-## 0. 前言：被隱藏的真實開端
+Go 程式不是從你寫的 `main()` 憑空開始的。
+在第一行業務程式碼之前，Runtime 已經建立 g0、M0、P、排程器與第一個 G；這一章要追的就是那段被藏起來的開場。
+
+---
+
+## 1. 第一樂章：前言：被隱藏的真實開端
 
 在 **Book 2** 中，我們探索了 303 號房的記憶體配置 (Stack/Heap)。但當時我們有一個巨大的誤解 —— 我們以為館長打開書本後，是直接從 `main()` 開始閱讀你寫的故事。
 
@@ -14,7 +19,7 @@
 ---
 
 
-## 1. 第一樂章：起源 (The Origin - `_rt0_go`)
+## 2. 第二樂章：起源 (The Origin - `_rt0_go`)
 
 讓我們回到 303 號房剛被打開的那一瞬間。
 
@@ -46,7 +51,7 @@ type g struct {
 }
 
 type m struct {
-    g0      *g       // [裝備] 指向那個負責調度的 g0 (System Stack)
+    g0      *g       // [控制台] 指向那個負責調度的 g0 (System Stack)
     curg    *g       // [任務] 此刻正在執行的 G (可能是 G1)
     p       uintptr  // [歸屬] 綁定的 P (資源與隊列)
     nextp   uintptr  // [預備] 暫存的 P (Handoff 交接時用)
@@ -84,7 +89,7 @@ type m struct {
 
 ---
 
-## 2. 第二樂章：創世 (Genesis - Initialization)
+## 3. 第三樂章：創世 (Genesis - Initialization)
 
 現在，**T0** 已經完成了身分轉換。他確認了與 **g0 控制台** 的連線，並接受了 **M0** 這個新代號。從此刻起，為了方便敘述，我們將這位登錄了系統的 T0 稱為 **M0**。
 
@@ -109,7 +114,7 @@ type m struct {
 
 ---
 
-## 3. 第三樂章：初生 (The First G - `newproc`)
+## 4. 第四樂章：初生 (The First G - `newproc`)
 
 終於，基礎設施 (M0, g0, P) 都準備好了。但現在還沒有任何「工作」可做。
 你可能會疑惑：「我的程式碼不是有寫 `func main()` 嗎？直接執行不就好了？」
@@ -129,7 +134,7 @@ type m struct {
 
 ---
 
-## 4. 第四樂章：永動 (Perpetual Motion - `mstart`)
+## 5. 第五樂章：永動 (Perpetual Motion - `mstart`)
 
 一切就緒。M0 做了一個深呼吸。
 他要執行最後一個指令：**`mstart` (開始營業)**。
@@ -145,7 +150,7 @@ type m struct {
 
 ---
 
-## 5. 第五樂章：調度策略 (The Strategy - Steal & Handover)
+## 6. 第六樂章：調度策略 (The Strategy - Steal & Handover)
 
 當 M0 執行完 G1 後，並不會停下來。他會繼續執行 `schedule()`，這才是 GMP 模型真正強大的地方。
 
@@ -163,7 +168,7 @@ type m struct {
 *   **P0 的反應**: P0 (籃子) 裡面還有其他 G 在排隊啊！不能陪 M0 一起死。
 *   **動作**: P0 會 **「斷開連結」** (Detach) 離開 M0。
 *   **尋找新歡**: P0 會去睡眠區叫醒一個備用的 M (比如 M1)，或者創造一個新的 M，然後把自己掛到 M1 身上繼續工作。
-*   **隱喻**: 店員 A 被奧客纏住 (Block) 了。經理 (P) 立刻把整籃訂單搬走，交給店員 B 繼續處理。店員 A 就留在原地慢慢應付奧客。
+*   **隱喻**: 館長 A 被一份阻塞任務纏住 (Block) 了。待辦清單區域 (P) 立刻把剩下的任務單轉交給館長 B 繼續處理。館長 A 留在原地等待阻塞解除。
 
 這兩大機制 (Stealing & Handoff) 確保了：
 *   **CPU 不閒置** (沒事做就去偷)。
@@ -171,7 +176,7 @@ type m struct {
 
 ---
 
-## 6. 第六樂章：Runtime 的真相與細節 (The Runtime Reality)
+## 7. 第七樂章：Runtime 的真相與細節 (The Runtime Reality)
 
 我們經常把 Runtime 講得很神祕，但說穿了，它就是一套寫好的 **員工守則 (SOP)**。
 
@@ -238,7 +243,7 @@ M 的一生其實就在做兩件事：**「跑 G」** 和 **「跑 schedule()」
 
 ---
 
-## 7. 第七樂章：硬體的真實代價 (The Hardware Reality)
+## 8. 第八樂章：硬體的真實代價 (The Hardware Reality)
 
 我們經常談論 M (Thread) 被切換，但這背後到底發生了什麼？為什麼 GMP 要如此費心地設計 Local Queue？
 這一切都跟 **OS 的魔法** 與 **硬體的現實** 有關。

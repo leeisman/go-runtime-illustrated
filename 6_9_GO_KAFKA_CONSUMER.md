@@ -1,12 +1,14 @@
-# Book 6.4: The Consumer Group (群體智慧與崩潰恢復)
+# Book 6.9: Kafka Consumer Group：群體智慧與崩潰恢復 (Consumer Group)
 
-如果說 Book 6.3 我們討論的是 Kafka 如何在「單機」上達到極致的 IO 速度。
-那麼 Book# 6.4 GO KAFKA CONSUMER (Group Protocol & Tuning)
+如果說 Book 6.8 我們討論的是 Kafka Producer 如何在「單機」上達到極致的 I/O 速度，
+那麼 Book 6.9 要回答的是另一個更難的問題：Consumer Group 如何在多台機器之間分工、保存進度，並在節點掛掉時恢復秩序。
 
 Producer 負責把資料灌進水庫，Consumer 則負責精確、快速地把水引到田裡。
 Kafka 的 Consumer 設計遠比 Producer 複雜，因為它必須處理 **「並發協作 (Group)」** 與 **「狀態保存 (Offset)」** 的難題。
 
-## 1. The Physics of Consumption (為什麼讀取這麼快？)
+---
+
+## 1. 第一樂章：讀取的物理學 (The Physics of Consumption)
 在討論分佈式 Group 之前，我們先看一個單體 Consumer 是如何從 Broker 拿到數據的。Kafka 的 Consumer 之所以能達到百萬級吞吐，關鍵在於它 **「繞過了」** 應用層，直接利用 OS Kernel 的 **Page Cache**。
 
 ### 1.1 The Kernel Path: `sendfile` & Page Cache
@@ -55,7 +57,7 @@ Broker 吐出數據的速度，遠快於 Client 端消化數據的速度。
 
 ---
 
-## 2. The Consumer Group Protocol (群體智慧: Rebalance)
+## 2. 第二樂章：Consumer Group 協議 (The Consumer Group Protocol)
 理解了單機物理極速與業務瓶頸後，我們來看如何擴展 (Scale Out)。
 Kafka 引以為傲的 **Consumer Group** 機制，讓多個 Consumer 能自動協調，分工合作消費一個Topic。
 
@@ -95,7 +97,7 @@ Kafka Client 內建了幾種分配策略 (Assignor)：
 
 ---
 
-## 2. Rebalance: The Protocol (當變動發生時)
+## 3. 第三樂章：當變動發生時 (Rebalance Protocol)
 
 Rebalance 是 Kafka 中最精密也最危險的機制。它發生在：
 1.  **新的 Consumer 加入** (Scale Up)。
@@ -122,7 +124,7 @@ Rebalance 是 Kafka 中最精密也最危險的機制。它發生在：
 
 ---
 
-## 3. The New Hero: Cooperative Rebalance (漸進式重平衡)
+## 4. 第四樂章：漸進式重平衡 (Cooperative Rebalance)
 
 為了解決 Stop-The-World，Kafka 2.4+ 引入了 **Cooperative Sticky Assignor**。
 核心哲學：**「只動該動的，不動原本好的」**。
@@ -137,7 +139,7 @@ Rebalance 是 Kafka 中最精密也最危險的機制。它發生在：
 
 ---
 
-## 4. Heartbeat 與 Session (生死判定)
+## 5. 第五樂章：Heartbeat 與 Session (生死判定)
 
 Coordinator 怎麼知道 A 掛了？靠兩個參數：
 1.  **`session.timeout.ms` (死亡判定時間)**:
@@ -155,7 +157,7 @@ Coordinator 怎麼知道 A 掛了？靠兩個參數：
 
 ---
 
-## 6. Deep Dive: Batch Fetch & The "ACK" (Offset Commit)
+## 6. 第六樂章：批次拉取與 ACK (Batch Fetch & Offset Commit)
 
 在實際生產環境中，許多從 RabbitMQ 或 SQS 轉過來的工程師常犯一個錯誤：**試圖對 Kafka 的每一條訊息進行 ACK**。這不僅效能極差，更誤解了 Kafka 的設計哲學。
 
@@ -337,7 +339,7 @@ type ConsumerMessage struct {
 
 ---
 
-## 7. Topic & Partition Design Strategy (架構極限)
+## 7. 第七樂章：Topic 與 Partition 設計策略 (Design Strategy)
 
 ### 7.1 How Many Partitions? (越多越好？)
 Partition 是併發的來源，但並非越多越好。
@@ -376,7 +378,7 @@ Cluster 的容量極限通常不由 Topic 數量決定，而是由 **Partition R
 
 ---
 
-## 8. The Future: KRaft (Kill The ZooKeeper)
+## 8. 第八樂章：拋棄 ZooKeeper 的未來 (KRaft)
 
 在現代 Kafka 架構中，**全面轉向 KRaft** 已是標準建議。
 
@@ -398,7 +400,7 @@ Cluster 的容量極限通常不由 Topic 數量決定，而是由 **Partition R
 
 ---
 
-## 9. Stability & Troubleshooting (急救手冊)
+## 9. 第九樂章：穩定性與故障排查 (Stability & Troubleshooting)
 
 **Kafka 本身非常穩定 (Rock Solid)**，其核心邏輯僅為 Append-Only File Write。生產環境中的問題通常源於 **底層資源 (Disk/Network)** 的飽和。
 
@@ -461,7 +463,7 @@ Cluster 的容量極限通常不由 Topic 數量決定，而是由 **Partition R
 
 ---
 
-## 10. Executive Summary & Best Practices Checklist (總結)
+## 10. 第十樂章：最佳實踐檢查表 (Executive Summary)
 
 為了構建一個穩定且高效的 Kafka Consumer 系統，請遵循以下檢核清單：
 
@@ -487,7 +489,7 @@ Cluster 的容量極限通常不由 Topic 數量決定，而是由 **Partition R
 
 ---
 
-## 11. Appendix: Real World Reliability Configs (生產環境配置範本)
+## 11. 第十一樂章：生產環境可靠性配置範本 (Real World Reliability Configs)
 
 不同業務對 **Availability (不卡住)** 與 **Consistency (不丟資料)** 的權重不同。請依照場景選擇套餐：
 
@@ -501,5 +503,3 @@ Cluster 的容量極限通常不由 Topic 數量決定，而是由 **Partition R
 | **Producer Retries** | Infinite (`MAX_INT`) | 3~5 次 | 0 |
 | **unclean.leader.election** | `false` (禁止髒選舉) | `false` | `true` (活著最重要) |
 | **代價** | 只要 2 台 Broker 掛掉就 **拒絕寫入** (Service Down)。 | 即使只剩 1 台 Broker 也能寫，但若該台隨後掛掉會**掉資料**。 | 資料完全無保障，但最省資源。 |
-
-

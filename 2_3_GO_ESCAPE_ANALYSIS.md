@@ -2,7 +2,9 @@
 
 這裡是我們驗證「生存法則」的實驗記錄。所有的隱喻都必須經得起編譯器的考驗。
 
-## 實驗一：切片擴容 (Slice Append)
+---
+
+## 1. 第一樂章：實驗一：切片擴容 (Slice Append)
 
 Slice 是 Go 最常用的資料結構，它的行為完美展示了 Stack 到 Heap 的過渡。
 
@@ -40,7 +42,7 @@ go build -gcflags "-m" experiment_slice.go
 
 ---
 
-## 實驗二：物件傳遞 (Struct Passing)
+## 2. 第二樂章：實驗二：物件傳遞 (Struct Passing)
 
 這驗證了我們最核心的「向上 vs 向下」法則。
 
@@ -87,7 +89,7 @@ go build -gcflags "-m" experiment_struct.go
 
 ---
 
-## 實驗三：介面陷阱 (Interface)
+## 3. 第三樂章：實驗三：介面陷阱 (Interface)
 
 Interface 是最容易讓人困惑的地方，這裡揭露了它的雙重性格。
 

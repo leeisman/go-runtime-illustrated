@@ -1,4 +1,4 @@
-# Book 6.8: MySQL InnoDB (地底下的國家檔案局)
+# Book 6.2: MySQL InnoDB：地底下的國家檔案局 (MySQL InnoDB)
 
 前面我們聊的是「如何在 Go 應用層優雅地把請求送過去（連線池 & Context）」。
 現在我們終於要推開 MySQL 這座「外國領事館」的大門，走進他們地底下的 **「國家檔案局 (Storage Engine)」** 了。
@@ -131,7 +131,7 @@ MVCC 是 InnoDB 實現高併發讀取的靈魂。它的原理是：**每一行�
 
 ---
 
-## 6. 終章：架構全景圖 (The Big Picture)
+## 6. 第六樂章：架構全景圖 (The Big Picture)
 
 ```text
 ┌─────────────────────────────────────────────┐

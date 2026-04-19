@@ -1,5 +1,10 @@
 # Book 3.17: The Slice (切片 - 動態陣列的奧義)
 
+Slice 是 Go 最常用的資料結構之一，也最容易讓人誤會。
+這一章會把 slice header、backing array、append 擴容與 sub-slice 陷阱拆開，讓你知道它什麼時候便宜，什麼時候會偷偷保住大量記憶體。
+
+---
+
 ## 1. 第一樂章：結構 (The Structure)
 
 在 Go 裡，Slice 並不是一個「陣列」，它只是一個 **描述符 (Header)**，用來描述底層陣列的一部分。
@@ -175,7 +180,7 @@ func filterOdd(nums []int) []int {
 
 ---
 
-## 6. 終章：總結 (The Finale)
+## 6. 第六樂章：總結 (The Finale)
 
 Slice 是 Go 最偉大的發明之一，它用極低的成本實現了動態陣列。
 *   **結構**: 3 個字的 Header (Data, Len, Cap)。

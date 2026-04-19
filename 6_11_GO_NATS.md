@@ -1,4 +1,4 @@
-# Book 6.6: NATS & JetStream (雲原生的神經網路)
+# Book 6.11: NATS 與 JetStream：雲原生的神經網路 (NATS & JetStream)
 
 如果說 Kafka 是為了 **大數據日誌 (Log)** 而生，RocketMQ 是為了 **複雜業務 (Business)** 而生。
 那麼 **NATS** 就是為了 **現代微服務 (Microservices) 與 實時通訊 (Real-time)** 而生。
@@ -7,7 +7,7 @@
 
 ---
 
-## 1. The Philosophy: Subject-Based Messaging (靈活的路由)
+## 1. 第一樂章：Subject-Based Messaging 的哲學 (Flexible Routing)
 
 NATS 與 Kafka/RocketMQ 最大的不同在於：它沒有 **Topic (實體隊列)** 的概念，只有 **Subject (邏輯標籤)**。
 
@@ -26,7 +26,7 @@ NATS 與 Kafka/RocketMQ 最大的不同在於：它沒有 **Topic (實體隊列)
 
 ---
 
-## 2. Communication Patterns (三大模式)
+## 2. 第二樂章：三大通訊模式 (Communication Patterns)
 
 NATS 不僅僅是 Pub/Sub，它還內建了 **Request-Reply**，這讓它能取代 HTTP/gRPC。
 
@@ -50,7 +50,7 @@ NATS 不僅僅是 Pub/Sub，它還內建了 **Request-Reply**，這讓它能取�
 
 ---
 
-## 3. JetStream: The Persistence Layer (持久化引擎)
+## 3. 第三樂章：持久化引擎 (JetStream)
 
 NATS Core 是 **In-Memory** 的 (速度極快但斷電會丟)。
 為了對標 Kafka，NATS 推出了 **JetStream**。
@@ -72,7 +72,7 @@ NATS Core 是 **In-Memory** 的 (速度極快但斷電會丟)。
 
 ---
 
-## 4. Go Implementation Example
+## 4. 第四樂章：Go 實作範例 (Implementation Example)
 
 NATS 的 Go Client (`nats.go`) 是所有 MQ Client 裡設計最優雅的 (畢竟是同一個爸媽生的)。
 
@@ -138,7 +138,7 @@ func jetstreamExample() {
 
 ---
 
-## 5. Summary: When to use NATS?
+## 5. 第五樂章：總結 (Summary): When to use NATS?
 
 *   **Go Team**: 首選。除錯、維運都與 Go 應用程式無縫接軌。
 *   **Internal Microservices**: 取代 gRPC/HTTP 做服務間通訊。享受 **Location Transparency** 和 **Load Balancing**。
@@ -151,7 +151,7 @@ func jetstreamExample() {
 
 ---
 
-## 6. Deep Dive: NATS Internals (底層實作揭密)
+## 6. 第六樂章：NATS 底層實作揭密 (Internals)
 NATS Server (`gnatsd`) 是純 Go 寫成的，它的源碼展現了如何用 Go 寫出 C++ 級別的效能。
 
 ### 6.1 The Subject Trie (路由核心)

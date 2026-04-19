@@ -1,5 +1,10 @@
 # Book 2.4: The Pointer (指針)
 
+指針最容易讓人混亂，因為它同時牽涉「值在哪裡」與「變數本身在哪裡」。
+這一章會把地址、指標變數、物件本體拆開，讓你分清楚你改的是地圖、座標，還是座標指向的東西。
+
+---
+
 ## 1. 第一樂章：隱喻 (The Metaphor - The Anchor & The Coordinate)
 
 在 Go 的記憶體世界裡，有兩種方式可以找到一個物件：
@@ -17,7 +22,9 @@
 3.  **萬能鑰匙 (`unsafe.Pointer`) - 轉換器 (The Bridge)**:
     *   它連接了「繩子」與「座標」的橋樑。你可以把繩子變成通用格式，再轉成座標進行計算。
 
-## 1.5 記憶體解剖 (Memory Anatomy)
+---
+
+## 2. 第二樂章：記憶體解剖 (Memory Anatomy)
 
 讓我們用 X 光來透視這一段程式碼在記憶體中的真實模樣。
 
@@ -58,7 +65,7 @@ var n uintptr = uintptr(u)    // n 存了 x 的地址數字
 
 ---
 
-## 2. 第二樂章：指針的三位一體 (The Triad)
+## 3. 第三樂章：指針的三位一體 (The Triad)
 
 在 Go 的底層編程 (如 `reflect`, `syscall`) 中，我們經常需要在這三種型態間切換：
 
@@ -87,7 +94,7 @@ Go Type (*int)  <--->  unsafe.Pointer  <--->  uintptr (Integar)
 
 ---
 
-## 3. 第三樂章：GC 的致命陷阱 (The GC Trap)
+## 4. 第四樂章：GC 的致命陷阱 (The GC Trap)
 
 為什麼 Go 要區分 `unsafe.Pointer` 和 `uintptr`？這是為了配合 **GC**。
 
@@ -171,7 +178,7 @@ fmt.Println(*realPtr) // 999
 
 ---
 
-## 4. 第四樂章：二級指針 (Double Pointer) - 安全世界的應用
+## 5. 第五樂章：二級指針 (Double Pointer) - 安全世界的應用
 
 前面我們討論了危險的 `unsafe` 操作。現在讓我們回到 **安全 (Safe)** 的 Go 語言世界。
 
@@ -236,7 +243,7 @@ Stack Frame (main)                Stack Frame (Init)
 
 ---
 
-## 5. 第五樂章：實戰對決 - 改變指向 vs 改變內容
+## 6. 第六樂章：實戰對決 - 改變指向 vs 改變內容
 
 為了徹底釐清 `*User` 和 `**User` 的差別，我們來看看這兩種常見的寫法在記憶體中到底有什麼不同。
 
@@ -330,7 +337,7 @@ func main() {
 
 ---
 
-## 6. 終章 (Finale)：為什麼要禁止指針運算？
+## 7. 第七樂章：總結 (Finale)：為什麼要禁止指針運算？
 
 C 語言允許 `p++` (移動到下一個陣列元素)，為什麼 Go 禁止？
 

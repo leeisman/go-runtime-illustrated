@@ -1,5 +1,10 @@
 # Book 3.15: The Defer (預約執行 - 最後的守門員)
 
+`defer` 是 Go 裡最像保險繩的語法：你現在綁上，函數離開前一定回來執行。
+這一章會看它的 LIFO 語義、Runtime 表示、效能演進，以及它在 panic/recover 和 graceful shutdown 裡的角色。
+
+---
+
 ## 1. 第一樂章：概念 (The Concept)
 
 `defer` 是 Go 語言中最獨特也最優雅的關鍵字之一。它的語義很簡單：**「請在這個函數結束前 (Return 之前)，執行這個動作。」**
@@ -143,7 +148,7 @@ func protect() {
 
 ---
 
-## 5. 終章：總結 (The Finale)
+## 5. 第五樂章：總結 (The Finale)
 
 1.  **結構**: Defer 是 LIFO 的鏈表。
 2.  **效能**: 現代 Go (Open-coded defer) 幾乎零成本，請放心使用。

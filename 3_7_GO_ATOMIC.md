@@ -151,6 +151,8 @@ Atomic 是 **精確打擊 (64-bit)**。
 Mutex 是 **地毯式轟炸 (Code Block)**。
 這就是它們適用場景完全不同的原因。
 
+---
+
 ## 6. 第六樂章：大物件的救星 (atomic.Value)
 你可能會問：「如果我一定要原子更新一個 User struct 怎麼辦？」
 這時候我們會用 `atomic.Value`。

@@ -5,7 +5,7 @@
 
 ---
 
-## 1. TCP State Debugging (狀態機故障)
+## 1. 第一樂章：TCP 狀態機故障 (State Debugging)
 
 ### 1.1 CLOSE_WAIT (Server 端的惡夢)
 *   **症狀**: Server 有大量 `CLOSE_WAIT`，導致 FD 耗盡。
@@ -31,7 +31,7 @@
 
 ---
 
-## 2. Load Testing Strategy (壓測正確姿勢)
+## 2. 第二樂章：壓測正確姿勢 (Load Testing Strategy)
 
 ### 2.1 對象決定策略
 1.  **測程式邏輯 (Logic)**:
@@ -45,7 +45,7 @@
 
 ---
 
-## 3. Nginx Tuning (反代優化)
+## 3. 第三樂章：Nginx 反代優化 (Tuning)
 
 Nginx 是最常見的 Gateway，預設配置通常不夠用。
 
@@ -68,7 +68,7 @@ server {
 
 ---
 
-## 4. Summary
+## 4. 第四樂章：總結 (Summary)
 *   **CLOSE_WAIT** 是您的 `Close()` 沒寫好。
 *   **TIME_WAIT** 是 TCP 為了可靠性而付出的代價 (Port 佔用)。
 *   **壓測** 時要清楚自己在測什麼 (Logic vs Handshake)。

@@ -5,7 +5,7 @@
 
 ---
 
-### 第一樂章：開張大吉 (Startup: `net.Listen`)
+## 1. 第一樂章：開張大吉 (Startup: `net.Listen`)
 
 1.  **Shell 的委託**：
     *   你站在 **202 包廂 (Shell Process)** 裡，對著終端機下令 `./poker-server`。
@@ -60,7 +60,7 @@ conn, err := ln.Accept()
 
 ---
 
-### 第二樂章：新用戶進場 (New User: `ln.Accept`)
+## 2. 第二樂章：新用戶進場 (New User: `ln.Accept`)
 
 1.  **無限迴圈 (The Daily Grind)**：
     *   館長進入 `for` 迴圈，準備受理業務。
@@ -121,9 +121,9 @@ conn, err := ln.Accept()
 
 ---
 
-### 第三樂章：協議升級 (Upgrade: `u.Upgrade`)
+## 3. 第三樂章：協議升級 (Upgrade: `u.Upgrade`)
 
-#### Step 1: 請求 (Data Arrival)
+### Step 1: 請求 (Data Arrival)
 *   **NIC -> SoftIRQ**: 網卡收到玩家的 TCP 封包 (Payload 內含 "HTTP Upgrade Request")，利用 **DMA** 寫入 Ring Buffer 並觸發中斷。
 *   **分派**: SoftIRQ 查表發現這封信屬於 **FD 5** (已建立連線)，於是將資料放入 FD 5 的 **Recv-Q**，並喚醒正在等待讀取的 303。
 *   **讀取**: 303 醒來，透過 `read(5)` 將資料領回。
@@ -138,7 +138,7 @@ buf := make([]byte, 1024)
 n, err := conn.Read(buf)
 ```
 
-#### Step 2: 回應 (Reply)
+### Step 2: 回應 (Reply)
 *   **對應代碼**:
 ```go
 resp := []byte("HTTP/1.1 101 Switching Protocols...")
@@ -150,7 +150,7 @@ conn.Write(resp)
     2.  **發射**: 隨後 Kernel 將資料放入 TX Ring，並按門鈴通知網卡。
     3.  **硬體**: 網卡啟動 **DMA** 將資料從 Kernel Memory 搬走並轉為電訊號發射。
 
-#### Step 3: 變身 (Switch)
+### Step 3: 變身 (Switch)
 *   **真相**: **FD 5 還是原來那個 TCP Socket**，OS 完全不在乎你們傳什麼。
 *   **改變**: 改變的是 **303 包廂的解析邏輯**。
     *   既然雙方已經講好 Upgrade，303 從此不再用 **HTTP Parser** (尋找 `\r\n`, 解析 Header)。
@@ -160,7 +160,7 @@ conn.Write(resp)
 
 ---
 
-### 第四樂章：資料輸入 (The I/O Trilogy)
+## 4. 第四樂章：資料輸入 (The I/O Trilogy)
 這是不斷重複的日常，也是高效能伺服器的秘密核心。
 
 **模式說明：標準阻塞式 I/O (Standard Blocking I/O)**
@@ -168,7 +168,7 @@ conn.Write(resp)
 > 在這個模式下，當沒有資料時，Process (303) 會被 OS 強制催眠。
 > 這有助於你理解硬體與 OS 的互動基礎。至於 Go 語言如何透過 **Netpoller (Epoll)** 來「魔改」這個行為以避免睡眠，請參閱 **[Book 3.3: 網路掛號處](3_3_GO_NETPOLLER.md)**。
 
-#### Step 1: 阻塞 (Wait - The Trap)
+### Step 1: 阻塞 (Wait - The Trap)
 *   **動作**: 303 執行 `ws.ReadMessage()`，試圖讀取玩家的下一步動作。
 *   **判斷**: **303** 拿著 **FD 5** (鑰匙) 向行政區詢問：「5 號信箱有信嗎？」行政區檢查對應的 **Kernel Recv-Q**，發現是空的。
 *   **掛號**: 於是 303 **請求行政區** 將自己的聯絡方式留在該信箱的 **「到貨通知單 (Wait Queue)」** 上。
@@ -183,12 +183,12 @@ conn.Write(resp)
 _, msg, err := ws.ReadMessage()
 ```
 
-#### Step 2: 喚醒 (Wakeup - The Interrupt)
+### Step 2: 喚醒 (Wakeup - The Interrupt)
 *   **觸發**: 玩家終於按下了 "All-in"，封包抵達 NIC -> DMA -> Ring Buffer -> SoftIRQ。
 *   **通知**: SoftIRQ 把資料放入 **行政區的信箱 (Kernel Recv-Q)**，隨後查看「到貨通知單」，發現 303 正在睡覺，於是通知 Scheduler：「叫醒他」。
 *   **排班**: Scheduler 將 303 的狀態標記為 **就緒 (RUNNABLE)**，並將其名牌重新掛回 **CPU 的待辦選秀名單 (Run Queue)**，等待下一次被選中執行。
 
-#### Step 3: 搬運 (Copy - The Heavy Lifting)
+### Step 3: 搬運 (Copy - The Heavy Lifting)
 *   **甦醒**: 館長 (CPU) 重新進入 303 包廂。
 *   **搬運**: 館長親自將資料從 **行政區信箱 (Kernel Recv-Q)** 逐字複製到 **303 的私人緩衝區 (User Buffer, 通常在 Heap)**。
 *   **代碼**:
@@ -201,12 +201,12 @@ _, msg, err := ws.ReadMessage()
 
 ---
 
-### 第五樂章：資料輸出 (Output: `ws.WriteMessage`)
+## 5. 第五樂章：資料輸出 (Output: `ws.WriteMessage`)
 
-#### Step 1: 準備 (User Space)
+### Step 1: 準備 (User Space)
 *   303 計算完畢，產生回應資料 `{"result": "ok"}`。
 
-#### Step 2: 寫入 (Copy to Kernel)
+### Step 2: 寫入 (Copy to Kernel)
 *   **動作**: 呼叫 `ws.WriteMessage()`。
 *   **搬運**: 館長將資料從 User Buffer 複製到 **Socket Send Buffer (Send-Q)** (Kernel Heap)。
 *   **返回**: 注意！只要複製進 Kernel 成功，Function 就會即刻返回 `nil` (此時資料還在電腦裡)。
@@ -219,8 +219,7 @@ _, msg, err := ws.ReadMessage()
 ws.WriteMessage(websocket.TextMessage, []byte(`{"result": "ok"}`))
 ```
 
-#### Step 3: 發送 (DMA Transmission)
+### Step 3: 發送 (DMA Transmission)
 *   **打包**: OS 擇機將 Send Buffer 資料封裝成 TCP 封包 (加上 Sequence Number 等 Header)。
 *   **發射**: 將封包描述符放入 TX Ring，按門鈴通知網卡。網卡啟動 **DMA** 將資料搬走並發射。
-
 

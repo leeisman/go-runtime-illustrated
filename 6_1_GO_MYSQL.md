@@ -1,8 +1,13 @@
 # Book 6.1: The MySQL Driver (資料庫驅動 - 連線池的藝術)
 
+Go 程式看起來只是呼叫 `db.Query()`，實際上背後牽涉連線池、協議握手、查詢取消與資料庫端資源管理。
+這一章要拆的是 `database/sql` 這個「領事館」如何管理昂貴的跨境連線。
+
+---
+
 ## 1. 第一樂章：隱喻 (The Metaphor - The Consulate)
 
-如果說 Go Runtime 是一個運作良好的 **「王國」** (有自己的圖書館、廚房、清潔工)，那麼 **Database (MySQL/Postgres)** 就是另一個強大的 **「外國」**。
+如果說 Go Runtime 是一座運作良好的 **「皇家圖書館」** (有館長、任務單、清潔隊與行政區)，那麼 **Database (MySQL/Postgres)** 就是另一個強大的 **「外國檔案館」**。
 
 我們不能直接去操作外國的資源。我們需要一個 **「領事館 (Consulate)」** 或是 **「貿易代表處」**。
 在 Go 裡面，這個領事館就是 **`database/sql`** 標準庫，而駐外大使就是 **Driver** (如 `go-sql-driver/mysql`)。

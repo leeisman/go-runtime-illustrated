@@ -10,29 +10,17 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 
 這部分建立了整個世界的觀 (Worldview)，介紹核心角色與 I/O 模型。
 
-*   **[Book 1.1: 皇家圖書館 (The Royal Library)](1_1_THE_LIBRARY.md)**
-    *   **核心隱喻**: CPU (館長), Memory (閱覽區), Kernel (行政區), I/O (外部出版社)。
-    *   **重點**: 認識所有角色與硬體互動的基礎流程 (DMA, Interrupt)。
+*   **[Book 1.1: 皇家圖書館 (The Royal Library)](1_1_THE_LIBRARY.md)**: 建立 CPU、Memory、Kernel、I/O 的皇家圖書館世界觀，理解 DMA、Interrupt 與硬體互動的基礎流程。
 
-*   **[Book 1.2: 線程與排程 (The Thread)](1_2_THE_THREAD.md)**
-    *   **核心隱喻**: 線程 (裝備), Context Switch (換裝備), Time Slice (工時)。
-    *   **重點**: 為什麼 OS Thread 切換這麼貴？深入理解 CPU 的執行單元。
+*   **[Book 1.2: 線程與排程 (The Thread)](1_2_THE_THREAD.md)**: 拆解 Thread Context、Time Slice 與 Context Switch，理解 OS Thread 為什麼昂貴。
 
-*   **[Book 1.3: 阻塞式網路模型 (Blocking Network I/O)](1_3_BLOCKING_NET_IO.md)**
-    *   **核心隱喻**: 銀行櫃台模式。
-    *   **重點**: 傳統 `read/write` 如何運作？為什麼一個連線卡住會導致整個 Thread 睡眠？C10K 問題的根源。
+*   **[Book 1.3: 阻塞式網路模型 (Blocking Network I/O)](1_3_BLOCKING_NET_IO.md)**: 從 `listen/accept/read/write` 追蹤 Blocking I/O，理解一個連線如何讓 Thread 睡眠與 C10K 問題的根源。
 
-*   **[Book 1.4: 現代網路模型 (The Modern Epoll Server)](1_4_EPOLL_NET_IO.md)**
-    *   **核心隱喻**: 監控室 (Epoll Instance), 點名單 (Ready List), 紅黑樹 (RB-Tree)。
-    *   **重點**: Linux 如何用 O(1) 的效率解決 C10K 問題。Go Netpoller 的底層基石。
+*   **[Book 1.4: 現代網路模型 (The Modern Epoll Server)](1_4_EPOLL_NET_IO.md)**: 解析 epoll instance、ready list 與 RB-tree，理解 Linux 如何支撐高併發 I/O 與 Go Netpoller。
 
-*   **[Book 1.5: Memory Mapped I/O (mmap)](1_5_MMAP_IO.md)**
-    *   **核心隱喻**: 記憶體與硬碟之間的時空隧道。
-    *   **重點**: mmap 如何繞過傳統 `read/write` 的 Kernel 緩衝區拷貝，讓硬碟上的 Block 直接映射進 Process 的虛擬位址空間，實現 Zero-Copy 讀取。Kafka/RocketMQ 的底層基石。
+*   **[Book 1.5: Memory Mapped I/O (mmap)](1_5_MMAP_IO.md)**: 說明 mmap 如何把檔案 block 映射進虛擬位址空間，減少傳統 `read/write` 的拷貝成本。
 
-*   **[Book 1.6: WAL (Write-Ahead Logging)](1_6_WAL.md)**
-    *   **核心隱喻**: 先寫日記再整理房間。
-    *   **重點**: Sequential I/O 吊打 Random I/O 的本質原因。WAL 如何透過順序 Append 日誌 + 背景 Checkpoint 落盤，讓 MySQL (Redo Log)、MongoDB (Journal)、PostgreSQL 同時保證「極速寫入」與「斷電不遺失資料」。
+*   **[Book 1.6: WAL (Write-Ahead Logging)](1_6_WAL.md)**: 解釋 Sequential I/O 與 Write-Ahead Logging，理解 Redo Log、Journal、Checkpoint 如何兼顧寫入速度與崩潰恢復。
 
 ---
 
@@ -40,29 +28,19 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 
 探索資料如何在 Stack 與 Heap 之間流動，以及 Go 如何自動管理這些資源。
 
-*   **[Book 2.1: Go Stack (堆疊)](2_1_GO_STACK.md)**
-    *   **核心隱喻**: 隨身筆記本 (Tissue Box)。
-    *   **重點**: 函式呼叫的本質，Goroutine Stack 的自動擴展 (Continuous Stack)。
+*   **[Book 2.1: Go Stack (堆疊)](2_1_GO_STACK.md)**: 從函式呼叫與作用域理解 Stack 配置，掌握 Goroutine Stack 的成長與低成本特性。
 
-*   **[Book 2.2: Go Heap (堆積)](2_2_GO_HEAP.md)**
-    *   **核心隱喻**: 公共黑板。
-    *   **重點**: 動態記憶體分配，GC 的掃描區域。
+*   **[Book 2.2: Go Heap (堆積)](2_2_GO_HEAP.md)**: 拆解 Heap 配置、指標追蹤與 GC 掃描成本，理解資料逃出作用域後的代價。
 
-*   **[Book 2.3: 逃逸分析 (Escape Analysis)](2_3_GO_ESCAPE_ANALYSIS.md)**
-    *   **核心隱喻**: 審查員。
-    *   **重點**: 編譯器如何決定變數該放在 Stack 還是 Heap？指針逃逸的規則。
+*   **[Book 2.3: 逃逸分析 (Escape Analysis)](2_3_GO_ESCAPE_ANALYSIS.md)**: 用實驗理解編譯器如何判斷 Stack 或 Heap，掌握指標、介面與切片造成逃逸的規則。
 
-*   **[Book 2.4: The Pointer (指針)](2_4_GO_POINTER.md)**
-    *   **核心隱喻**: 繫繩 (Anchor) 與坐標 (Coordinate)。
-    *   **重點**: `unsafe.Pointer` 與 `uintptr` 的區別。為什麼 `uintptr` 是 GC 不安全的？二級指針 (`**T`) 的應用。
+*   **[Book 2.4: The Pointer (指針)](2_4_GO_POINTER.md)**: 釐清地址、指標變數與物件本體，理解 `unsafe.Pointer`、`uintptr`、二級指針與 GC 安全性。
 
-*   **[Book 2.5: The Type System (型別的物理本質)](2_5_GO_TYPE.md)**
-    *   **核心隱喻**: 裸體 (Naked) 與制服 (Uniform)。
-    *   **重點**: 為什麼具體型別沒有 Type ID？Type Assertion 的底層機制。
+*   **[Book 2.5: The Type System (型別的物理本質)](2_5_GO_TYPE.md)**: 從 concrete type 到 interface，理解型別如何決定記憶體解讀方式與 type assertion 的底層機制。
 
 ---
 
-## 3. Go Runtime Internals (腰包裡的秘密)
+## 🧠 Book 3: Go Runtime Internals (腰包裡的秘密)
 這系列深入 Go Runtime 的底層機制，從調度器到記憶體管理，再到併發原語的實作細節。
 
 *   **[Book 3.1: The Scheduler (GMP)](3_1_GO_GMP.md)**: 宏觀調度模型，M, P, G 的三角關係與 Work Stealing。
@@ -80,7 +58,8 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 *   **[Book 3.13: The Interface](3_13_GO_INTERFACE.md)**: 萬能代理。`eface` 與 `iface` 的底層結構，以及 `itab` 的動態分派成本。
 *   **[Book 3.14: The Map](3_14_GO_MAP.md)**: 雜湊表。Hash Bucket (`bmap`) 結構、Tophash 加速與漸進式擴容 (Evacuation)。
 *   **[Book 3.15: The Defer & Panic](3_15_GO_DEFER.md)**: 異常處理。Defer 鏈表的執行順序與 `_defer` 結構的演進 (Heap -> Stack -> Open-coded)。
-*   **[Book 3.16: The Reflection](3_16_GO_REFLECT.md)**: 鏡像世界。`reflect` 的三大定律，以及 `interface{}` 與 `reflect.Value` 的底層轉換。
+*   **[Book 3.16: The Reflection](3_16_GO_REFLECTION.md)**: 鏡像世界。`reflect` 的三大定律，以及 `interface{}` 與 `reflect.Value` 的底層轉換。
+*   **[Book 3.17: The Slice](3_17_GO_SLICE.md)**: 動態陣列的奧義。Slice Header、Backing Array、append 擴容、Sub-slicing 記憶體挾持與常用演算法。
 
 ---
 
@@ -128,6 +107,7 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 *   **[Book 6.12: Proto Actor vs Chan](6_12_PROTO_ACTOR_VS_CHAN.md)**: 併發模型對決。Actor 模型的狀態封裝與 Lock-Free 優勢，對比 Go Native Channel 的侷限與適用場景。
 *   **[Book 6.13: MongoDB WiredTiger (儲存引擎深潛)](6_13_MONGODB_WT.md)**: NoSQL 底層機制。BSON 記憶體指標跳躍 (Pointer Skip)、Multikey Index 陣列爆裂機制、MVCC Update List、Checkpoint 洗盤、Document-Level Lock 與 MySQL vs MongoDB 深度架構對比。
 *   **[Book 6.14: MongoDB Cluster (原生叢集架構)](6_14_MONGODB_CLUSTER.md)**: 分散式擴展。Replica Set 讀寫分離與自動選舉、Sharded Cluster 三元件 (mongos / Config Server / Shard)、Shard Key 熱點問題、Batch 拆包路由機制與 Scatter-Gather 查詢代價分析。
+*   **[Book 6.15: Apache Cassandra](6_15_CASSANDRA.md)**: 高吞吐分散式資料庫。LSM-Tree 寫入路徑、Read Amplification、Partition Key / Clustering Key、一致性等級、LWT、Compaction 與 Gossip Ring 架構。
 
 ---
 
@@ -146,10 +126,20 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 
 ---
 
+## 🧪 Book 8: Testing & Profiling (測試與效能診斷)
+
+這系列收束到工程驗證：如何在測試期抓出併發錯誤，並在生產環境用 profiling 找出真正的瓶頸與洩漏。
+
+*   **[Book 8.1: Data Race Detector](8_1_GO_TEST_RACE.md)**: 開天眼除錯。`go test -race` 的 ThreadSanitizer 追蹤原理、動態分析盲區、CI/CD 中量壓測與極限壓測的職責分離。
+*   **[Book 8.2: Goroutine Leak & Pprof Profiling](8_2_GO_TEST_LEAK_PPROF.md)**: 抓漏神器。`uber-go/goleak` 測試期守門、常見記憶體洩漏模式、`net/http/pprof` 生產診斷與 heap/goroutine profile 排查流程。
+
+---
+
 ## 🔧 Appendix (附錄)
 
 *   **[.agent/project_rules.md](.agent/project_rules.md)**: 專案撰寫規範、核心隱喻對照表。
 *   **[OS_Metaphor.md](OS_Metaphor.md)**: 原始隱喻發想筆記。
+*   **[archive/old_book7/](archive/old_book7/)**: Book 7 重構前的歷史稿。主線已由 `7_1_INFRA.md` 到 `7_8_K8S_ACTOR_CLUSTER.md` 取代，舊稿僅作追溯與段落回收使用。
 
 ---
 *Created by Antigravity Agent & Frankie Li*

@@ -1,5 +1,10 @@
 # Book 1.6: WAL (Write-Ahead Logging - 先寫日記再整理房間)
 
+資料庫和訊息系統最怕的不是慢，而是「寫到一半突然斷電」。
+WAL 要解決的核心問題是：如何先用一條順序日誌保住事實，再慢慢整理真正的資料結構。
+
+---
+
 ## 1. 第一樂章：為什麼需要 WAL？(Random I/O vs Sequential I/O)
 
 在 Book 1.1 我們學過，硬碟（不管是 HDD 還是 SSD）做 **Random I/O (隨機讀寫)** 的速度，遠遠慢於 **Sequential I/O (順序讀寫)**。
@@ -113,7 +118,7 @@ MySQL InnoDB 的 `innodb_flush_log_at_trx_commit` 參數就是在控制這件事
 
 ---
 
-## 5. 終章：一句話總結
+## 5. 第五樂章：一句話總結 (Finale)
 
 > **WAL 的本質：用 Sequential I/O 的日誌先保住資料安全，再用背景程序慢慢做 Random I/O 的落盤。它是所有現代資料庫、訊息佇列、分散式系統的「持久性 (Durability)」基石。**
 

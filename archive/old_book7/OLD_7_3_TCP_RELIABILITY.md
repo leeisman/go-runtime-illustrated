@@ -8,7 +8,7 @@
 
 ---
 
-## 1. The Anatomy of a Connection (連線的解剖)
+## 1. 第一樂章：連線的解剖 (Anatomy of a Connection)
 
 在進入可靠性討論前，我們先回答兩個最底層的問題：**「連線是真的嗎？」** 與 **「封包怎麼認路？」**
 
@@ -39,7 +39,7 @@
 
 ---
 
-## 2. The Illusion of Continuity (連續性的錯覺)
+## 2. 第二樂章：連續性的錯覺 (The Illusion of Continuity)
 
 Go 的 `net.Conn` 給你一種「水管 (Stream)」的感覺，但其實底層是「碎片 (Packets)」。
 
@@ -58,7 +58,7 @@ Go 的 `net.Conn` 給你一種「水管 (Stream)」的感覺，但其實底層�
 
 ---
 
-## 3. The Teardown Nightmare (斷線的藝術)
+## 3. 第三樂章：斷線的藝術 (The Teardown Nightmare)
 
 TCP 的**建立連線 (3-Way Handshake)** 很簡單，但 **「分手 (4-Way Wave)」** 卻是導致伺服器崩潰的元兇。
 
@@ -73,7 +73,7 @@ TCP 的**建立連線 (3-Way Handshake)** 很簡單，但 **「分手 (4-Way Wav
 
 ---
 
-## 4. Ops Review: TIME_WAIT vs CLOSE_WAIT
+## 4. 第四樂章：TIME_WAIT vs CLOSE_WAIT 運維複盤 (Ops Review)
 
 這是 SRE 面試必考題，也是線上故障 (Outage) 的常見原因。
 
@@ -105,7 +105,7 @@ TCP 的**建立連線 (3-Way Handshake)** 很簡單，但 **「分手 (4-Way Wav
 1.  **測「程式邏輯/資料庫」 (Target: Application)**:
     *   **方法**: 使用 **長連接 (Keep-Alive)**。
     *   **目標**: 讓 Go Server CPU 飆到 80% 以上，或是 DB 連線滿載。
-    *   **原因**: 我們要測的是「廚師炒菜有多快 (Logic)」，不是「客人進門有多快 (Handshake)」。如果你用短連線，壓力全在 OS 握手，程式碼根本還沒用力，且 Client 端容易先耗盡 Port。
+    *   **原因**: 我們要測的是「館長處理業務邏輯有多快 (Logic)」，不是「新客人辦入館手續有多快 (Handshake)」。如果你用短連線，壓力全在 OS 握手，程式碼根本還沒用力，且 Client 端容易先耗盡 Port。
 
 2.  **測「網關/防火牆能力」 (Target: Gateway)**:
     *   **方法**: 使用 **短連線 (Short Connection)**。
@@ -145,7 +145,7 @@ TCP 的**建立連線 (3-Way Handshake)** 很簡單，但 **「分手 (4-Way Wav
 
 ---
 
-## 5. Optimization Strategy (優化策略)
+## 5. 第五樂章：優化策略 (Optimization Strategy)
 
 ### 5.1 解決 TIME_WAIT (Port 耗盡)
 如果您的 Nginx (連後端 Go) 出現大量 TIME_WAIT：
@@ -159,8 +159,7 @@ TCP 的**建立連線 (3-Way Handshake)** 很簡單，但 **「分手 (4-Way Wav
 
 ---
 
-## 6. Summary
+## 6. 第六樂章：總結 (Summary)
 *   **Reliability**: 是靠 Seq + ACK + Retransmit 換來的。代價是延遲。
 *   **CLOSE_WAIT**: 是 **程式 Bug** (Server 忘了關門)。
 *   **TIME_WAIT**: 是 **TCP 機制** (Client 為了保險故意停留)。可以透過 Keep-Alive 或 Reuse 優化。
-

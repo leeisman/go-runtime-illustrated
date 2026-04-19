@@ -1,5 +1,10 @@
 # Book 2.5: The Type System (型別的物理本質)
 
+型別不是編譯器拿來嚇人的標籤，而是資料在記憶體裡如何被解讀的規則。
+這一章從 concrete type 開始，慢慢走到 interface，理解 Go 為什麼能同時保有靜態安全與動態分派。
+
+---
+
 ## 1. 第一樂章：裸體數據 (Naked Data)
 
 在 Go 語言中，當你定義一個具體型別 (Concrete Type) 的變數時，它在記憶體中是如何存在的？
@@ -114,7 +119,7 @@ Runtime 必須檢查 `File` 具體型別是否擁有 `io.Reader` 規定的所有
 
 ---
 
-## 5. 終章 (Finale)：為什麼沒有 `int(interface_var)`？
+## 5. 第五樂章：總結 (Finale)：為什麼沒有 `int(interface_var)`？
 
 這是一個常見的新手誤區：
 

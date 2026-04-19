@@ -28,7 +28,9 @@ Go Runtime 每次向 OS 伸手，都是 **64MB 起跳** 的大開口 (Arena)。
 
 **結論**: 只要是 **微小物件 (Tiny)** 或 **小物件 (Small)** 的分配，Go 都是走這條 **極速通道**。這就是為什麼我們說「在 Go 裡，`new(int)` 幾乎跟 Stack 分配一樣快」。
 
-## 1.5 插曲：mcache 與 Stack 的糾葛 (The Stack Confusion)
+---
+
+## 2. 第二樂章：插曲：mcache 與 Stack 的糾葛 (The Stack Confusion)
 
 這時你可能會問：「mcache 不需要鎖，又是在 P 身上，那它跟 Stack 有什麼不同？為什麼它還需要 GC？」
 
@@ -51,7 +53,7 @@ Go Runtime 每次向 OS 伸手，都是 **64MB 起跳** 的大開口 (Arena)。
 
 ---
 
-## 2. 第二樂章：部門金庫 (mcentral) - Fine-grained Lock
+## 3. 第三樂章：部門金庫 (mcentral) - Fine-grained Lock
 
 如果經理的抽屜空了怎麼辦？或者抽屜裡的錢面額不對 (只有 100 塊的，但你需要 64 塊的)？
 
@@ -77,7 +79,7 @@ Go Runtime 每次向 OS 伸手，都是 **64MB 起跳** 的大開口 (Arena)。
 
 ---
 
-## 3. 第三樂章：總行金庫 (mheap) - Global Lock
+## 4. 第四樂章：總行金庫 (mheap) - Global Lock
 
 如果連樓層提款機都沒錢了？或者 G1 獅子大開口要申請 **1GB** 的超大記憶體？
 
@@ -111,7 +113,7 @@ Runtime 會啟動 **「補貨鏈 (Refill Chain)」**，而不是把你當大物�
 
 ---
 
-## 4. 第四樂章：總結圖解 (The Grand Flow)
+## 5. 第五樂章：總結圖解 (The Grand Flow)
 
 讓我們把鏡頭拉遠，看一次從 **OS 到底層員工** 的完整資金流動：
 
@@ -134,7 +136,10 @@ Runtime 會啟動 **「補貨鏈 (Refill Chain)」**，而不是把你當大物�
     *   **結果**: **發生競爭**。`mcentral` 上鎖，P1 先補貨，P2 排隊等待。這就是為什麼共享區域需要鎖，也是我們要極力避免的路徑。
 
 **最終結論**:
-## 5. 第五樂章：驗屍報告 (Profiling)
+
+---
+
+## 6. 第六樂章：驗屍報告 (Profiling)
 
 即使有 mcache，Heap 分配始終比 Stack 貴。除了 GC 壓力外，**記憶體翻攪 (Churn)** 也是隱藏的效能殺手。我們可以用 `pprof` 來抓出真兇。
 

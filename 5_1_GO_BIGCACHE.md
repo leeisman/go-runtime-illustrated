@@ -1,5 +1,10 @@
 # Book 5.1: Go BigCache (Zero GC Cache)
 
+BigCache 的重點不是「更快的 map」，而是用資料布局避開 GC 掃描成本。
+這一章會說明為什麼大量快取物件會拖慢 Go，以及 BigCache 如何用 pointer-less map 與 byte ring buffer 把壓力轉移掉。
+
+---
+
 ## 1. 第一樂章：GC 的恐懼 (The Fear of GC)
 
 在 Go 語言中，寫一個 In-Memory Cache 最簡單的方法就是 `map[string]interface{}`。
@@ -226,6 +231,8 @@ func IsSold(cache *bigcache.BigCache, seatID string) bool {
 *   **小物件 (Small Object)**: BigCache 完勝。拷貝幾個 byte 幾乎不花時間，但 1000 萬個小物件會搞死 GC。
 *   **大物件 (Huge Object, >10KB)**: 原生 Map 可能更好。因為拷貝大塊記憶體很耗頻寬 (Memory Bandwidth)，且通常大物件數量不多，GC 壓力較小。
 
+---
+
 ## 6. 第六樂章：競品對決 (BigCache vs FreeCache vs GroupCache)
 
 | Feature | **BigCache** | **FreeCache** | **GroupCache** | **sync.Map** |
@@ -252,6 +259,6 @@ func IsSold(cache *bigcache.BigCache, seatID string) bool {
 
 ---
 
-## 6. 結語 (Conclusion)
+## 7. 第七樂章：結語 (Conclusion)
 BigCache 告訴我們，在追求系統極限時，我們甚至要學會「繞過語言的特性」。
 Go 的 GC 很棒，但在千萬級物件面前，它是個負擔。這時，回歸原始的 **Byte Array** 和 **Ring Buffer**，不僅是復古，更是對計算機底層原理的致敬。

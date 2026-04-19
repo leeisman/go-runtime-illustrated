@@ -1,4 +1,9 @@
-# Book 6.2: The Redis Driver (緩存驅動 - 急速快遞)
+# Book 6.7: Redis Driver：緩存驅動與急速快遞 (Redis Driver)
+
+Redis 快，不只是因為它在記憶體裡，也因為協議簡單、操作模型直接、資料結構高度工程化。
+這一章會從 Driver、RESP、Pipeline、Cluster 到秒殺場景，拆解 Redis 為什麼能站在高併發熱路徑上。
+
+---
 
 ## 1. 第一樂章：隱喻 (The Metaphor - The Express Courier)
 
@@ -558,7 +563,5 @@ func BuyTicket(ctx context.Context, userID int, ticketID string) error {
     *   **解法**: Go 程式內部可以使用 `Mutex` 或 `SingleFlight`。
     *   **邏輯**: 對於同一個座位的請求，Go 節點在 10ms 內只允許 **這 10 萬人中的 1 個人** 去 Redis 執行 `SETNX`。
     *   **結果**: 其他 99,999 人在 Go 層直接被告知「搶票中...失敗」，保護了 Redis 不被熱點擊穿。
-
-
 
 

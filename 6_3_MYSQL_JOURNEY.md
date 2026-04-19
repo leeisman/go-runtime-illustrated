@@ -1,4 +1,4 @@
-# Book 6.9: MySQL 五大部門 (INSERT & UPDATE 的完整旅程)
+# Book 6.3: MySQL 五大部門：INSERT & UPDATE 的完整旅程 (MySQL Journey)
 
 在 Book 6.8 我們認識了 InnoDB 的四大護法。
 現在我們把所有元件攤開，用一家 **「實體公司」** 的隱喻，完整走過一筆 INSERT 和 UPDATE 從進門到回報成功的所有流程。
@@ -210,6 +210,6 @@ Step 6: 回報成功 ✅
 
 ---
 
-## 6. 終章：面試一句話總結
+## 6. 第六樂章：面試一句話總結 (Finale)
 
 > **「MySQL 的所有讀寫操作，永遠只發生在 Buffer Pool (記憶體) 裡。B+ Tree 負責查地址，Undo Log 負責保存舊版本 (MVCC + Rollback)，Redo Log 負責保命 (Crash Recovery)。真正寫回硬碟的動作，是由背景的 Checkpoint 慢慢完成的。這就是為什麼 MySQL 的 Buffer Pool 越大，效能越好。」**

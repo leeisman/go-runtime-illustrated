@@ -1,27 +1,32 @@
 # Book 3.11: The Channel (通道)
 
-## 1. 第一樂章：隱喻 (The Metaphor - Kitchen Assembly Line)
+Channel 是 Go 最具代表性的併發工具，但它不是魔法管線。
+這一章會把它拆成 Runtime 裡的 `hchan`、ring buffer、等待隊列與鎖，讓你知道每一次 send/recv 到底付出了什麼成本。
 
-我們來到一個 **繁忙的中央廚房**。
+---
 
-如果要讓兩個廚師 (Producers/Consumers) 合作，傳統方法 (Shared Memory) 是讓他們共用 **同一個砧板**。
-*   **慘劇 (Race Condition)**: 兩個廚師同時揮刀，很容易也不小心切到對方的手，或者把兩道菜混在一起。
-*   **解法 (Lock)**: 必須規定「我切菜時你不能動」，這導致嚴重的停頓。
+## 1. 第一樂章：隱喻 (The Metaphor - Conveyor Belt)
 
-Go 的 Channel 則是引入了一條 **「出菜流水線」**：
-*   **流水線 (Channel)**: 單向傳遞食材的輸送帶。
-*   **動作**: 廚師 A 切好菜，放上輸送帶 (Send)；廚師 B 在另一端拿走 (Recv) 下鍋。
-*   **結果**: 兩人的刀子永遠不會打架，且各自可以依照自己的節奏工作。
+我們回到皇家圖書館的地下行政區。
+
+如果要讓兩位館長 (Goroutines) 合作，傳統方法 (Shared Memory) 是讓他們共用 **同一塊大黑板**。
+*   **慘劇 (Race Condition)**: 兩位館長同時改同一格內容，很容易互相覆蓋，或讀到半成品。
+*   **解法 (Lock)**: 必須規定「我寫黑板時你不能動」，這導致嚴重的停頓。
+
+Go 的 Channel 則是在兩位館長之間架了一條 **「任務單輸送帶」**：
+*   **輸送帶 (Channel)**: 一條受 Runtime 管理的通道，用來傳遞資料。
+*   **動作**: 館長 A 把任務單放上輸送帶 (Send)；館長 B 在另一端取走 (Recv)。
+*   **結果**: 雙方不需要直接搶同一塊黑板，而是透過通道交接所有權。
 
 這體現了 CSP 的精隨：
 > **Do not communicate by sharing memory; instead, share memory by communicating.**
-> (與其冒著切斷手指的風險搶砧板，不如用傳送帶把食材遞過去。)
+> (與其搶同一塊黑板，不如把資料裝進任務單，沿著輸送帶交給下一位館長。)
 
 ---
 
 ## 2. 第二樂章：結構 (The Structure - hchan)
 
-Go Channel 的底層是一個名為 `hchan` 的 Struct (位於 `runtime/chan.go`)。它就像那個氣送管的控制閥。
+Go Channel 的底層是一個名為 `hchan` 的 Struct (位於 `runtime/chan.go`)。它就像這條任務單輸送帶的控制台。
 
 ```go
 type hchan struct {
@@ -153,7 +158,7 @@ type sudog struct {
 
 ---
 
-## 5. 終章 (Finale)
+## 5. 第五樂章：總結 (Finale)
 
 Channel 是一個 **「帶鎖的環狀緩衝區 + 排程器整合機制」**。
 *   它不只是資料結構，它還與 Runtime Scheduler 深度綁定 (負責讓 G 睡覺和起床)。
