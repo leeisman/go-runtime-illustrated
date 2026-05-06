@@ -123,6 +123,7 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 *   **[Book 7.6: K8s Game Traffic (遊戲流量零代理架構)](7_6_K8S_GAME_TRAFFIC.md)**: 超低延遲遊戲後端。Headless Service 零代理 (Zero-Proxy) 設計、Client-Side gRPC Load Balancing (`dns:///` + `round_robin`)、HTTP/2 多路複用取代 Connection Pool、Service Mesh 的 L7 Sidecar 效能代價分析。
 *   **[Book 7.7: K8s 零停機部署 (Probes & Graceful Shutdown)](7_7_K8S_DEPLOY.md)**: 完整發版生命週期。Rolling Update 滾動換班機制、Readiness / Liveness / Startup 三種探針的職責差異、preStop Sleep 解決網路拓撲更新空窗期、Go `server.Shutdown()` 與 gRPC `GracefulStop()` 優雅退場完整實作。
 *   **[Book 7.8: K8s 分散式 Actor 叢集 (Smart Gateway & Consistent Hashing)](7_8_K8S_ACTOR_CLUSTER.md)**: 去中心化動態路由。白嫖 K8s API Server 作為註冊中心 (Kubernetes Provider)、Headless Service Endpoints Watch 機制、Smart Gateway 零轉發直連優化，以及基於記憶體的一致性雜湊 (Consistent Hashing) 演算法推演。
+*   **[Book 7.9: K8s 裡的 gRPC 負載不平衡陷阱 (The gRPC Load Balancing Trap)](7_9_K8S_GRPC_LOAD_BALANCING.md)**: L4 vs L7 的維度打擊。剖析 kube-proxy (TCP DNAT) 與 HTTP/2 多路複用衝突導致的單點流量傾斜，以及 Client-Side LB 與 Service Mesh 的破局架構。
 
 ---
 
@@ -132,6 +133,18 @@ Welcome to the **Royal Library Documentation Series**, a conceptual guide design
 
 *   **[Book 8.1: Data Race Detector](8_1_GO_TEST_RACE.md)**: 開天眼除錯。`go test -race` 的 ThreadSanitizer 追蹤原理、動態分析盲區、CI/CD 中量壓測與極限壓測的職責分離。
 *   **[Book 8.2: Goroutine Leak & Pprof Profiling](8_2_GO_TEST_LEAK_PPROF.md)**: 抓漏神器。`uber-go/goleak` 測試期守門、常見記憶體洩漏模式、`net/http/pprof` 生產診斷與 heap/goroutine profile 排查流程。
+
+---
+
+## ⚔️ Book 9: 複合實戰演練 (Composite Practical Exercises)
+
+這系列結合前面各章節的底層知識，探討在真實微服務架構下的高併發防禦、架構設計與極端場景解決方案。
+
+*   **[Book 9.1: 微服務高併發漏斗防禦 (Funnel Defense Architecture)](9_1_FUNNEL_DEFENSE.md)**: 結合 Redis 分散式鎖與 MySQL 樂觀鎖，構建擋下 99% 流量並保證 1% 絕對正確的交易流水線。
+*   **[Book 9.2: 資料庫 IOPS 防禦戰術 (Database IOPS Protection Strategies)](9_2_IOPS_DEFENSE.md)**: 從快取防護網、延遲寫入到寫合併與批次處理，榨乾資料庫物理效能極限的防禦兵法。
+*   **[Book 9.3: Go 零分配優化戰術 (Zero Allocation Tactics)](9_3_ZERO_ALLOCATION.md)**: 對抗 GC 的極限優化。透過 sync.Pool、逃逸分析控制與零拷貝，將高頻系統的延遲抖動降至最低。
+*   **[Book 9.4: 極限無鎖併發與佇列優化 (Lock-Free Concurrency)](9_4_LOCK_FREE_CONCURRENCY.md)**: 突破 Channel 的互斥鎖瓶頸。借鑑 LMAX Disruptor，利用 CAS 與 Ring Buffer 達成奈秒級延遲。
+*   **[Book 9.5: 無鎖鏈結串列與 MPSC 佇列 (Lock-Free Linked List & MPSC)](9_5_LOCK_FREE_MPSC.md)**: Actor 模型的底層引擎。結合 Dummy Node 技巧與 atomic.Swap，打造無限容量且零 GC 的極速信箱。
 
 ---
 
